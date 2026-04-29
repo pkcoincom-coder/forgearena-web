@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+
+<html lang="en" style="color-scheme:dark;">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<title>ForgeArena — Global Esports Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:#060608!important;color-scheme:dark;scroll-behavior:smooth;}
+body{
+  background:#060608!important;
+  color:#EEEEF2!important;
+  font-family:'Barlow',sans-serif;
+  overflow-x:hidden;
+  min-height:100vh;
+}
+
+:root{
+–black:#060608;
+–deep:#0a0a0d;
+–panel:#0d0d11;
+–card:#111116;
+–border:rgba(255,255,255,0.07);
+–fire:#FF3D00;
+–fire2:#FF6600;
+–gold:#FFB300;
+–white:#EEEEF2;
+–muted:#555560;
+–sub:#888896;
+}
+
+/* SCANLINES */
+body::after{
+content:’’;
+position:fixed;inset:0;
+background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);
+pointer-events:none;z-index:9998;
+}
+
+/* ===== NAV ===== */
+nav{
+position:fixed;top:0;left:0;right:0;
+height:56px;
+display:flex;align-items:center;
+padding:0 20px;
+background:rgba(6,6,8,0.96);
+border-bottom:1px solid var(–border);
+z-index:100;
+gap:12px;
+}
+
+.logo{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:20px;
+letter-spacing:4px;text-transform:uppercase;
+color:var(–white);flex:1;
+}
+.logo em{color:var(–fire);font-style:normal;}
+
+.nav-live{
+display:flex;align-items:center;gap:6px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:3px;
+color:var(–sub);
+}
+.live-dot{
+width:6px;height:6px;
+background:#00ff88;border-radius:50%;
+animation:livepulse 1.5s ease infinite;
+}
+@keyframes livepulse{
+0%,100%{opacity:1;transform:scale(1);}
+50%{opacity:0.3;transform:scale(0.6);}
+}
+
+/* LANG BAR */
+.lang-strip{
+position:fixed;top:56px;left:0;right:0;
+background:rgba(6,6,8,0.9);
+border-bottom:1px solid rgba(255,61,0,0.15);
+display:flex;align-items:center;
+padding:6px 20px;gap:4px;
+z-index:99;overflow-x:auto;
+}
+.lang-strip::-webkit-scrollbar{display:none;}
+.lbtn{
+background:transparent;border:none;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:1.5px;
+color:var(–muted);padding:4px 10px;
+cursor:pointer;transition:all .15s;
+display:flex;align-items:center;gap:4px;
+white-space:nowrap;border-bottom:2px solid transparent;
+}
+.lbtn:hover{color:var(–white);}
+.lbtn.on{color:var(–fire);border-bottom-color:var(–fire);}
+
+/* ===== HERO VIDEO SECTION ===== */
+.hero{
+padding-top:112px;
+min-height:100vh;
+display:flex;flex-direction:column;
+position:relative;overflow:hidden;
+}
+
+/* BG GLOW */
+.hero-glow{
+position:absolute;inset:0;
+background:
+radial-gradient(ellipse 80% 50% at 50% 80%,rgba(255,61,0,.12) 0%,transparent 70%),
+radial-gradient(ellipse 40% 30% at 10% 20%,rgba(255,179,0,.05) 0%,transparent 60%);
+pointer-events:none;
+}
+
+/* GRID */
+.hero-grid-bg{
+position:absolute;inset:0;
+background-image:
+linear-gradient(rgba(255,61,0,.04) 1px,transparent 1px),
+linear-gradient(90deg,rgba(255,61,0,.04) 1px,transparent 1px);
+background-size:48px 48px;
+mask-image:radial-gradient(ellipse at center,black 20%,transparent 80%);
+pointer-events:none;
+}
+
+/* HERO TOP */
+.hero-top{
+padding:20px 20px 0;
+text-align:center;
+position:relative;z-index:2;
+}
+
+.eyebrow{
+display:inline-flex;align-items:center;gap:8px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:4px;text-transform:uppercase;
+color:var(–fire);margin-bottom:20px;
+}
+.eyebrow::before,.eyebrow::after{
+content:’’;width:20px;height:1px;background:var(–fire);
+}
+
+.hero-title{
+font-family:‘Barlow Condensed’,sans-serif;
+font-weight:900;
+font-size:clamp(56px,14vw,100px);
+line-height:.88;text-transform:uppercase;
+letter-spacing:-2px;margin-bottom:16px;
+}
+.hero-title .t1{
+display:block;
+background:linear-gradient(135deg,#fff 0%,#ff6600 50%,#ffb300 100%);
+-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.hero-title .t2{
+display:block;
+color:rgba(255,255,255,.06);
+-webkit-text-stroke:1px rgba(255,61,0,.25);
+font-size:.85em;letter-spacing:0px;
+}
+
+.hero-sub{
+font-size:14px;font-weight:300;color:var(–sub);
+max-width:400px;margin:0 auto 24px;line-height:1.7;
+}
+.hero-sub strong{color:var(–white);font-weight:500;}
+
+/* ===== REAL-TIME STATS BAR ===== */
+.stats-bar{
+display:flex;
+background:rgba(13,13,17,.98);
+border-top:1px solid var(–border);
+border-bottom:1px solid var(–border);
+position:relative;z-index:2;
+overflow-x:auto;
+}
+.stats-bar::-webkit-scrollbar{display:none;}
+
+.stat-cell{
+flex:1;min-width:100px;
+padding:14px 16px;
+border-right:1px solid var(–border);
+text-align:center;
+position:relative;
+}
+.stat-cell:last-child{border-right:none;}
+
+.stat-cell .slabel{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:9px;letter-spacing:3px;text-transform:uppercase;
+color:var(–muted);margin-bottom:4px;display:block;
+}
+
+.stat-cell .sval{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:22px;
+color:var(–white);line-height:1;
+display:block;
+}
+
+.stat-cell.fire .sval{
+color:var(–fire);
+text-shadow:0 0 20px rgba(255,61,0,.4);
+}
+.stat-cell.gold .sval{
+color:var(–gold);
+text-shadow:0 0 20px rgba(255,179,0,.4);
+}
+.stat-cell.green .sval{color:#00ff88;}
+
+.stat-blink{
+display:inline-block;
+width:5px;height:5px;
+background:#00ff88;border-radius:50%;
+vertical-align:middle;margin-left:4px;
+animation:livepulse 1.2s ease infinite;
+}
+
+/* ===== PRIZE POOL HERO ===== */
+.prize-hero{
+background:linear-gradient(135deg,rgba(255,61,0,.08),rgba(255,179,0,.05));
+border:1px solid rgba(255,179,0,.15);
+margin:20px;
+padding:24px 20px;
+text-align:center;
+position:relative;overflow:hidden;
+clip-path:polygon(12px 0%,100% 0%,calc(100% - 12px) 100%,0% 100%);
+}
+
+.prize-hero::before{
+content:’’;
+position:absolute;top:0;left:0;right:0;height:2px;
+background:linear-gradient(90deg,transparent,var(–gold),var(–fire),var(–gold),transparent);
+animation:shimmer 3s ease infinite;
+}
+
+@keyframes shimmer{
+0%{background-position:-200% 0;}
+100%{background-position:200% 0;}
+}
+
+.prize-label{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:4px;text-transform:uppercase;
+color:var(–gold);margin-bottom:8px;
+}
+
+.prize-amount{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;
+font-size:clamp(40px,10vw,64px);
+color:var(–gold);
+text-shadow:0 0 40px rgba(255,179,0,.4);
+line-height:1;
+letter-spacing:-1px;
+}
+
+.prize-currency{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:16px;font-weight:600;
+color:rgba(255,179,0,.6);
+letter-spacing:2px;margin-left:4px;
+}
+
+.prize-note{
+font-size:11px;color:var(–muted);margin-top:8px;
+font-family:‘Barlow Condensed’,sans-serif;
+letter-spacing:2px;text-transform:uppercase;
+}
+
+.prize-badge{
+display:inline-flex;align-items:center;gap:6px;
+background:rgba(255,179,0,.1);
+border:1px solid rgba(255,179,0,.2);
+padding:4px 12px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:2px;text-transform:uppercase;
+color:var(–gold);margin-top:12px;
+}
+
+/* ===== VIDEO SECTION ===== */
+.section-head{
+padding:24px 20px 16px;
+display:flex;align-items:center;gap:12px;
+}
+
+.section-label{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:4px;text-transform:uppercase;
+color:var(–fire);
+}
+
+.section-title{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:20px;
+letter-spacing:2px;text-transform:uppercase;
+color:var(–white);
+}
+
+.sep{flex:1;height:1px;background:var(–border);}
+
+.live-tag{
+display:flex;align-items:center;gap:5px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:2px;
+color:#00ff88;
+}
+
+/* VIDEO CARDS */
+.video-scroll{
+display:flex;gap:12px;
+padding:0 20px 20px;
+overflow-x:auto;
+scroll-snap-type:x mandatory;
+}
+.video-scroll::-webkit-scrollbar{display:none;}
+
+.video-card{
+flex:0 0 280px;
+background:var(–card);
+border:1px solid var(–border);
+border-radius:2px;
+overflow:hidden;
+scroll-snap-align:start;
+cursor:pointer;
+transition:all .2s;
+position:relative;
+}
+
+.video-card:hover{
+border-color:rgba(255,61,0,.4);
+transform:translateY(-2px);
+}
+
+.video-thumb{
+width:100%;height:158px;
+background:linear-gradient(135deg,#0d0d11 0%,#1a0a05 50%,#0d0d11 100%);
+position:relative;overflow:hidden;
+display:flex;align-items:center;justify-content:center;
+}
+
+.video-thumb canvas{
+position:absolute;inset:0;
+width:100%;height:100%;
+}
+
+.play-btn{
+position:absolute;
+width:44px;height:44px;
+background:rgba(255,61,0,.9);
+border-radius:50%;
+display:flex;align-items:center;justify-content:center;
+font-size:18px;
+box-shadow:0 0 30px rgba(255,61,0,.5);
+z-index:2;
+animation:playpulse 2s ease infinite;
+}
+
+@keyframes playpulse{
+0%,100%{box-shadow:0 0 20px rgba(255,61,0,.4);}
+50%{box-shadow:0 0 40px rgba(255,61,0,.7);}
+}
+
+.video-badge{
+position:absolute;top:8px;left:8px;
+background:var(–fire);
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:9px;letter-spacing:2px;
+padding:2px 8px;color:white;z-index:2;
+clip-path:polygon(4px 0%,100% 0%,calc(100% - 4px) 100%,0% 100%);
+}
+
+.video-views{
+position:absolute;bottom:8px;right:8px;
+background:rgba(0,0,0,.7);
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:1px;color:rgba(255,255,255,.7);
+padding:2px 8px;z-index:2;
+}
+
+.video-info{
+padding:12px;
+}
+
+.video-title{
+font-family:‘Barlow Condensed’,sans-serif;
+font-weight:700;font-size:14px;
+letter-spacing:1px;text-transform:uppercase;
+color:var(–white);margin-bottom:6px;
+}
+
+.video-meta{
+display:flex;justify-content:space-between;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:1px;
+color:var(–muted);
+}
+
+.video-winner{color:var(–gold);}
+
+/* ===== LEADERBOARD FLASH ===== */
+.leaderboard{
+margin:0 20px 20px;
+background:var(–card);
+border:1px solid var(–border);
+}
+
+.lb-header{
+padding:12px 16px;
+background:rgba(255,61,0,.08);
+border-bottom:1px solid var(–border);
+display:flex;align-items:center;gap:8px;
+}
+
+.lb-title{
+font-family:‘Barlow Condensed’,sans-serif;
+font-weight:700;font-size:13px;
+letter-spacing:3px;text-transform:uppercase;
+color:var(–fire);flex:1;
+}
+
+.lb-row{
+display:flex;align-items:center;
+padding:10px 16px;
+border-bottom:1px solid rgba(255,255,255,.04);
+transition:background .15s;
+animation:newentry .4s ease;
+}
+
+@keyframes newentry{
+from{background:rgba(255,61,0,.1);transform:translateX(-4px);}
+to{background:transparent;transform:translateX(0);}
+}
+
+.lb-rank{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:16px;
+width:32px;color:var(–muted);
+}
+.lb-rank.top{color:var(–gold);}
+
+.lb-avatar{
+width:28px;height:28px;
+border-radius:2px;
+background:linear-gradient(135deg,var(–fire),var(–gold));
+display:flex;align-items:center;justify-content:center;
+font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:12px;
+color:white;margin-right:10px;flex-shrink:0;
+}
+
+.lb-name{
+flex:1;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:14px;letter-spacing:1px;
+color:var(–white);
+}
+
+.lb-country{font-size:14px;margin-right:6px;}
+
+.lb-score{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:16px;
+color:var(–gold);
+}
+
+/* ===== SIGNUP SECTION ===== */
+.signup-section{
+margin:0 20px 20px;
+background:var(–panel);
+border:1px solid var(–border);
+position:relative;overflow:hidden;
+}
+
+.signup-section::before{
+content:’’;position:absolute;top:0;left:0;right:0;height:2px;
+background:linear-gradient(90deg,transparent,var(–fire),transparent);
+}
+
+.signup-inner{padding:24px 20px;}
+
+.signup-pretitle{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:10px;letter-spacing:4px;text-transform:uppercase;
+color:var(–fire);margin-bottom:8px;
+}
+
+.signup-title{
+font-family:‘Rajdhani’,sans-serif;
+font-weight:700;font-size:24px;
+letter-spacing:2px;text-transform:uppercase;
+margin-bottom:6px;
+}
+
+.signup-sub{
+font-size:13px;color:var(–sub);
+font-weight:300;line-height:1.5;margin-bottom:20px;
+}
+
+/* PROGRESS */
+.prog-wrap{margin-bottom:16px;}
+.prog-labels{
+display:flex;justify-content:space-between;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:9px;letter-spacing:2px;text-transform:uppercase;
+color:var(–muted);margin-bottom:5px;
+}
+.prog-bar{height:2px;background:rgba(255,255,255,.06);}
+.prog-fill{
+height:100%;width:0%;
+background:linear-gradient(90deg,var(–fire),var(–gold));
+transition:width .4s ease;
+}
+
+/* FIELD */
+.flabel{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:9px;letter-spacing:3px;text-transform:uppercase;
+color:var(–muted);margin-bottom:5px;display:block;
+}
+
+.finput{
+width:100%;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.07);
+border-left:2px solid transparent;
+color:var(–white);
+padding:12px 14px;
+font-family:‘Barlow’,sans-serif;font-size:14px;font-weight:300;
+outline:none;transition:all .2s;margin-bottom:12px;
+}
+.finput::placeholder{color:var(–muted);font-size:12px;}
+.finput:focus{border-left-color:var(–fire);background:rgba(255,61,0,.03);}
+.finput:valid:not(:placeholder-shown){border-left-color:#00c853;}
+
+.fselect{
+appearance:none;-webkit-appearance:none;
+background-image:url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘10’ height=‘6’%3E%3Cpath d=‘M0 0l5 6 5-6z’ fill=’%23555560’/%3E%3C/svg%3E”);
+background-repeat:no-repeat;background-position:right 12px center;
+cursor:pointer;padding-right:32px;
+}
+.fselect option,.fselect optgroup{background:#111116;color:var(–white);}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* CHIPS */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px;}
+.chip{
+display:flex;align-items:center;gap:4px;
+padding:7px 12px;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.07);
+cursor:pointer;transition:all .15s;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:1px;text-transform:uppercase;
+color:var(–sub);user-select:none;
+clip-path:polygon(5px 0%,100% 0%,calc(100% - 5px) 100%,0% 100%);
+}
+.chip.on{border-color:rgba(255,61,0,.5);background:rgba(255,61,0,.08);color:var(–white);}
+.chip:hover{color:var(–white);}
+
+/* SUBMIT */
+.submit-btn{
+width:100%;
+background:linear-gradient(100deg,var(–fire),#ff5500);
+border:none;color:white;
+padding:16px;
+font-family:‘Rajdhani’,sans-serif;font-weight:700;
+font-size:16px;letter-spacing:4px;text-transform:uppercase;
+cursor:pointer;transition:all .25s;
+position:relative;overflow:hidden;
+clip-path:polygon(10px 0%,100% 0%,calc(100% - 10px) 100%,0% 100%);
+}
+.submit-btn::before{
+content:’’;position:absolute;inset:0;
+background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+transform:translateX(-100%);transition:transform .5s;
+}
+.submit-btn:hover::before{transform:translateX(100%);}
+.submit-btn:hover{transform:translateY(-1px);box-shadow:0 8px 32px rgba(255,61,0,.35);}
+
+.form-note{
+text-align:center;font-size:10px;letter-spacing:1px;
+color:var(–muted);margin-top:10px;
+}
+
+/* SUCCESS */
+.success-box{
+display:none;padding:32px 20px;text-align:center;
+}
+.success-icon{font-size:48px;margin-bottom:16px;animation:bounceIn .5s ease;}
+@keyframes bounceIn{0%{transform:scale(.5);opacity:0;}70%{transform:scale(1.1);}100%{transform:scale(1);opacity:1;}}
+.success-title{
+font-family:‘Rajdhani’,sans-serif;font-weight:700;
+font-size:24px;letter-spacing:4px;text-transform:uppercase;
+color:var(–white);margin-bottom:8px;
+}
+.success-sub{font-size:13px;color:var(–sub);line-height:1.6;}
+.success-tag{
+display:inline-block;margin-top:16px;
+padding:8px 20px;
+border:1px solid rgba(255,61,0,.3);
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:3px;text-transform:uppercase;
+color:var(–fire);
+}
+
+/* FOOTER */
+footer{
+padding:24px 20px;
+border-top:1px solid var(–border);
+text-align:center;
+}
+footer .logo{font-size:18px;margin-bottom:8px;}
+.foot-text{font-size:11px;color:var(–muted);letter-spacing:1px;}
+
+/* TICKER */
+.ticker-wrap{
+background:rgba(255,61,0,.08);
+border-top:1px solid rgba(255,61,0,.15);
+border-bottom:1px solid rgba(255,61,0,.15);
+overflow:hidden;padding:8px 0;
+position:relative;
+}
+.ticker{
+display:flex;gap:40px;
+animation:ticker 30s linear infinite;
+width:max-content;
+}
+@keyframes ticker{
+from{transform:translateX(0);}
+to{transform:translateX(-50%);}
+}
+.ticker-item{
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:2px;text-transform:uppercase;
+color:var(–fire);white-space:nowrap;
+display:flex;align-items:center;gap:8px;
+}
+.ticker-sep{color:var(–gold);}
+
+/* NOTIFY TOAST */
+.toast{
+position:fixed;bottom:80px;left:50%;
+transform:translateX(-50%) translateY(100px);
+background:var(–card);
+border:1px solid var(–border);
+border-left:3px solid var(–fire);
+padding:12px 16px;
+min-width:260px;max-width:90vw;
+z-index:1000;
+transition:transform .4s ease;
+font-family:‘Barlow Condensed’,sans-serif;
+}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast-title{font-size:13px;font-weight:700;letter-spacing:1px;color:var(–white);margin-bottom:2px;}
+.toast-sub{font-size:11px;color:var(–sub);letter-spacing:.5px;}
+.toast-icon{font-size:18px;float:left;margin-right:10px;margin-top:2px;}
+
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+
+<nav>
+  <div class="logo">FORGE<em>ARENA</em></div>
+  <div class="nav-live">
+    <div class="live-dot"></div>
+    <span data-i18n="navStatus">LIVE NOW</span>
+  </div>
+</nav>
+
+<!-- LANG STRIP -->
+
+<div class="lang-strip">
+  <button class="lbtn on" onclick="setLang('en')" id="btn-en">🇬🇧 EN</button>
+  <button class="lbtn" onclick="setLang('th')" id="btn-th">🇹🇭 ไทย</button>
+  <button class="lbtn" onclick="setLang('vi')" id="btn-vi">🇻🇳 VI</button>
+  <button class="lbtn" onclick="setLang('id')" id="btn-id">🇮🇩 ID</button>
+  <button class="lbtn" onclick="setLang('ja')" id="btn-ja">🇯🇵 JA</button>
+  <button class="lbtn" onclick="setLang('ko')" id="btn-ko">🇰🇷 KO</button>
+  <button class="lbtn" onclick="setLang('zh')" id="btn-zh">🇨🇳 ZH</button>
+</div>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-grid-bg"></div>
+
+  <div class="hero-top">
+    <div class="eyebrow" data-i18n="eyebrow">Global Esports Platform</div>
+    <h1 class="hero-title">
+      <span class="t1">FORGE</span>
+      <span class="t2">ARENA</span>
+    </h1>
+    <p class="hero-sub" data-i18n="heroDesc">
+      The <strong>first platform</strong> built for tournament organizers worldwide. Any game. Any scale.
+    </p>
+  </div>
+
+  <!-- TICKER -->
+
+  <div class="ticker-wrap">
+    <div class="ticker" id="ticker">
+      <div class="ticker-item">🏆 <span id="tk1">ShadowKnight_TH</span> won ฿2,400 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ New Tournament: <span id="tk2">SEA Championship #47</span> <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🔥 <span id="tk3">DragonClan_VN</span> joined ForgeArena <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🥇 <span id="tk4">StormRaider_ID</span> reached #1 Global <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">💰 Prize Pool growing: <span id="prizeSmall">฿128,400</span> <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🏆 <span>PhoenixClash_JP</span> won ฿3,200 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ New Organizer: <span>CoC_Masters_KR</span> <span class="ticker-sep">◆</span></div>
+      <!-- duplicate for seamless loop -->
+      <div class="ticker-item">🏆 <span>ShadowKnight_TH</span> won ฿2,400 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ New Tournament: <span>SEA Championship #47</span> <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🔥 <span>DragonClan_VN</span> joined ForgeArena <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🥇 <span>StormRaider_ID</span> reached #1 Global <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">💰 Prize Pool growing: <span>฿128,400</span> <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🏆 <span>PhoenixClash_JP</span> won ฿3,200 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ New Organizer: <span>CoC_Masters_KR</span> <span class="ticker-sep">◆</span></div>
+    </div>
+  </div>
+
+  <!-- REAL-TIME STATS -->
+
+  <div class="stats-bar">
+    <div class="stat-cell green">
+      <span class="slabel" data-i18n="stat1Label">Online Now</span>
+      <span class="sval" id="statOnline">1,247<span class="stat-blink"></span></span>
+    </div>
+    <div class="stat-cell fire">
+      <span class="slabel" data-i18n="stat2Label">New Today</span>
+      <span class="sval" id="statNew">+384</span>
+    </div>
+    <div class="stat-cell">
+      <span class="slabel" data-i18n="stat3Label">Total Members</span>
+      <span class="sval" id="statTotal">12,847</span>
+    </div>
+    <div class="stat-cell gold">
+      <span class="slabel" data-i18n="stat4Label">Live Tournaments</span>
+      <span class="sval" id="statTournament">23</span>
+    </div>
+  </div>
+
+  <!-- PRIZE POOL -->
+
+  <div class="prize-hero">
+    <div class="prize-label" data-i18n="prizeLabel">⚡ VIP Monthly Prize Pool</div>
+    <div>
+      <span class="prize-amount" id="prizeAmount">128,400</span>
+      <span class="prize-currency">฿</span>
+    </div>
+    <div class="prize-note" data-i18n="prizeNote">Growing every minute · Reset monthly</div>
+    <div class="prize-badge" data-i18n="prizeBadge">🔒 VIP Members Only — Join Now</div>
+  </div>
+</section>
+
+<!-- VIDEO HIGHLIGHTS -->
+
+<div class="section-head">
+  <div>
+    <div class="section-label" data-i18n="videoLabel">This Month's Best</div>
+    <div class="section-title" data-i18n="videoTitle">Top Match Highlights</div>
+  </div>
+  <div class="sep"></div>
+  <div class="live-tag"><div class="live-dot"></div> <span data-i18n="liveTag">LIVE</span></div>
+</div>
+
+<div class="video-scroll">
+  <!-- VIDEO 1 -->
+  <div class="video-card" onclick="playVideo(1)">
+    <div class="video-thumb">
+      <canvas id="vc1" width="280" height="158"></canvas>
+      <div class="video-badge">🏆 FINAL</div>
+      <div class="play-btn">▶</div>
+      <div class="video-views" id="v1views">24.7K views</div>
+    </div>
+    <div class="video-info">
+      <div class="video-title" data-i18n="v1title">SEA Championship — Grand Final</div>
+      <div class="video-meta">
+        <span class="video-winner" data-i18n="v1winner">🥇 ShadowKnight_TH</span>
+        <span data-i18n="v1date">Apr 28, 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO 2 -->
+
+  <div class="video-card" onclick="playVideo(2)">
+    <div class="video-thumb">
+      <canvas id="vc2" width="280" height="158"></canvas>
+      <div class="video-badge" style="background:#FFB300;color:#000;">🔥 TOP PLAY</div>
+      <div class="play-btn">▶</div>
+      <div class="video-views" id="v2views">18.3K views</div>
+    </div>
+    <div class="video-info">
+      <div class="video-title" data-i18n="v2title">Perfect 3-Star vs Max TH17</div>
+      <div class="video-meta">
+        <span class="video-winner" data-i18n="v2winner">🥇 DragonClan_VN</span>
+        <span data-i18n="v2date">Apr 26, 2026</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEO 3 -->
+
+  <div class="video-card" onclick="playVideo(3)">
+    <div class="video-thumb">
+      <canvas id="vc3" width="280" height="158"></canvas>
+      <div class="video-badge" style="background:#9C27B0;">⚡ UPSET</div>
+      <div class="play-btn">▶</div>
+      <div class="video-views" id="v3views">11.9K views</div>
+    </div>
+    <div class="video-info">
+      <div class="video-title" data-i18n="v3title">Biggest Upset of the Month</div>
+      <div class="video-meta">
+        <span class="video-winner" data-i18n="v3winner">🥇 StormRaider_ID</span>
+        <span data-i18n="v3date">Apr 24, 2026</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LIVE LEADERBOARD -->
+
+<div class="section-head" style="padding-top:8px;">
+  <div>
+    <div class="section-label" data-i18n="lbLabel">Real-Time Rankings</div>
+    <div class="section-title" data-i18n="lbTitle">Global Leaderboard</div>
+  </div>
+  <div class="sep"></div>
+  <div class="live-tag"><div class="live-dot"></div> LIVE</div>
+</div>
+
+<div class="leaderboard">
+  <div class="lb-header">
+    <div class="lb-title" data-i18n="lbHeader">Top Organizers — April 2026</div>
+  </div>
+  <div id="lbBody"></div>
+</div>
+
+<!-- SIGNUP -->
+
+<div class="signup-section">
+  <div class="signup-inner" id="formArea">
+    <div class="signup-pretitle" data-i18n="formPretitle">Early Organizer Registration</div>
+    <div class="signup-title" data-i18n="formTitle">Claim Your Spot</div>
+    <p class="signup-sub" data-i18n="formSub">Limited early access. Be first to launch tournaments on ForgeArena.</p>
+
+```
+<div class="prog-wrap">
+  <div class="prog-labels">
+    <span data-i18n="progLabel">Profile Completion</span>
+    <span id="progPct">0%</span>
+  </div>
+  <div class="prog-bar"><div class="prog-fill" id="progFill"></div></div>
+</div>
+
+<label class="flabel" data-i18n="labelName">Full Name</label>
+<input class="finput" type="text" id="fName" placeholder="Your name" oninput="updateProg()">
+
+<label class="flabel" data-i18n="labelEmail">Email Address</label>
+<input class="finput" type="email" id="fEmail" placeholder="your@email.com" oninput="updateProg()">
+
+<div class="two-col">
+  <div>
+    <label class="flabel" data-i18n="labelCountry">Country</label>
+    <select class="finput fselect" id="fCountry" onchange="updateProg();autoLang()">
+      <option value="" disabled selected data-i18n-opt="selCountry">Select country</option>
+      <optgroup label="Southeast Asia">
+        <option value="TH" data-lang="th">🇹🇭 Thailand</option>
+        <option value="VN" data-lang="vi">🇻🇳 Vietnam</option>
+        <option value="ID" data-lang="id">🇮🇩 Indonesia</option>
+        <option value="PH" data-lang="en">🇵🇭 Philippines</option>
+        <option value="MY" data-lang="en">🇲🇾 Malaysia</option>
+        <option value="SG" data-lang="en">🇸🇬 Singapore</option>
+      </optgroup>
+      <optgroup label="East Asia">
+        <option value="JP" data-lang="ja">🇯🇵 Japan</option>
+        <option value="KR" data-lang="ko">🇰🇷 South Korea</option>
+        <option value="CN" data-lang="zh">🇨🇳 China</option>
+        <option value="TW" data-lang="zh">🇹🇼 Taiwan</option>
+      </optgroup>
+      <optgroup label="Global">
+        <option value="US" data-lang="en">🇺🇸 USA</option>
+        <option value="GB" data-lang="en">🇬🇧 UK</option>
+        <option value="AU" data-lang="en">🇦🇺 Australia</option>
+        <option value="OTHER" data-lang="en">🌐 Other</option>
+      </optgroup>
+    </select>
+  </div>
+  <div>
+    <label class="flabel" data-i18n="labelLang">Language</label>
+    <select class="finput fselect" id="fLang" onchange="updateProg();setLangFromSelect()">
+      <option value="" disabled selected>Preferred language</option>
+      <option value="th">🇹🇭 ภาษาไทย</option>
+      <option value="en">🇬🇧 English</option>
+      <option value="vi">🇻🇳 Tiếng Việt</option>
+      <option value="id">🇮🇩 Bahasa</option>
+      <option value="ja">🇯🇵 日本語</option>
+      <option value="ko">🇰🇷 한국어</option>
+      <option value="zh">🇨🇳 中文</option>
+    </select>
+  </div>
+</div>
+
+<label class="flabel" data-i18n="labelGame">Game / Community</label>
+<input class="finput" type="text" id="fGame" placeholder="Clash of Clans, Mobile Legends..." oninput="updateProg()">
+
+<label class="flabel" data-i18n="labelChannel">Contact Channel</label>
+<div class="chips">
+  <div class="chip on" onclick="toggleChip(this)">📧 <span data-i18n="chipEmail">Email</span></div>
+  <div class="chip" onclick="toggleChip(this)">💚 LINE</div>
+  <div class="chip" onclick="toggleChip(this)">🎮 Discord</div>
+  <div class="chip" onclick="toggleChip(this)">📱 WhatsApp</div>
+  <div class="chip" onclick="toggleChip(this)">✈️ Telegram</div>
+</div>
+
+<label class="flabel" data-i18n="labelHandle">Username / ID</label>
+<input class="finput" type="text" id="fHandle" placeholder="LINE ID, Discord#0000..." oninput="updateProg()">
+
+<button class="submit-btn" onclick="handleSubmit()">
+  <span data-i18n="submitBtn">⚡ Register as Early Organizer</span>
+</button>
+<p class="form-note" data-i18n="formNote">Free · No credit card · Limited spots</p>
+```
+
+  </div>
+
+  <div class="success-box" id="successBox">
+    <div class="success-icon">⚡</div>
+    <div class="success-title" data-i18n="successTitle">You're In</div>
+    <p class="success-sub" data-i18n="successSub">Welcome to the first wave of ForgeArena organizers. We'll reach out in your language, on your channel.</p>
+    <div class="success-tag" data-i18n="successTag">Organizer Registered</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+  <div class="logo">FORGE<em>ARENA</em></div>
+  <p class="foot-text">forgearena.net &nbsp;·&nbsp; © 2026 ForgeArena</p>
+</footer>
+
+<!-- TOAST -->
+
+<div class="toast" id="toast">
+  <span class="toast-icon" id="toastIcon">🏆</span>
+  <div class="toast-title" id="toastTitle">ShadowKnight_TH</div>
+  <div class="toast-sub" id="toastSub">just won ฿2,400 in SEA Championship</div>
+</div>
+
+<script>
+// ====== i18n ======
+const T = {
+  en:{
+    navStatus:'LIVE NOW',eyebrow:'Global Esports Platform',
+    heroDesc:'The <strong>first platform</strong> built for tournament organizers worldwide. Any game. Any scale.',
+    stat1Label:'Online Now',stat2Label:'New Today',stat3Label:'Total Members',stat4Label:'Live Tournaments',
+    prizeLabel:'⚡ VIP Monthly Prize Pool',prizeNote:'Growing every minute · Reset monthly',
+    prizeBadge:'🔒 VIP Members Only — Join Now',
+    videoLabel:"This Month's Best",videoTitle:'Top Match Highlights',liveTag:'LIVE',
+    v1title:'SEA Championship — Grand Final',v1winner:'🥇 ShadowKnight_TH',v1date:'Apr 28, 2026',
+    v2title:'Perfect 3-Star vs Max TH17',v2winner:'🥇 DragonClan_VN',v2date:'Apr 26, 2026',
+    v3title:'Biggest Upset of the Month',v3winner:'🥇 StormRaider_ID',v3date:'Apr 24, 2026',
+    lbLabel:'Real-Time Rankings',lbTitle:'Global Leaderboard',lbHeader:'Top Organizers — April 2026',
+    formPretitle:'Early Organizer Registration',formTitle:'Claim Your Spot',
+    formSub:'Limited early access. Be first to launch tournaments on ForgeArena.',
+    progLabel:'Profile Completion',
+    labelName:'Full Name',labelEmail:'Email Address',labelCountry:'Country',
+    labelLang:'Language',labelGame:'Game / Community',labelChannel:'Contact Channel',
+    chipEmail:'Email',labelHandle:'Username / ID',
+    submitBtn:'⚡ Register as Early Organizer',formNote:'Free · No credit card · Limited spots',
+    successTitle:"You're In",
+    successSub:"Welcome to the first wave of ForgeArena organizers. We'll reach out in your language.",
+    successTag:'Organizer Registered',selCountry:'Select country'
+  },
+  th:{
+    navStatus:'ออนไลน์อยู่',eyebrow:'แพลตฟอร์ม Esports ระดับโลก',
+    heroDesc:'<strong>แพลตฟอร์มแรก</strong> ที่สร้างขึ้นสำหรับผู้จัดการแข่งขันทั่วโลก ทุกเกม ทุกขนาด',
+    stat1Label:'ออนไลน์ตอนนี้',stat2Label:'สมัครวันนี้',stat3Label:'สมาชิกทั้งหมด',stat4Label:'แข่งอยู่ตอนนี้',
+    prizeLabel:'⚡ รางวัลสะสม VIP ประจำเดือน',prizeNote:'เพิ่มขึ้นทุกนาที · รีเซ็ตทุกเดือน',
+    prizeBadge:'🔒 สมาชิก VIP เท่านั้น — สมัครเลย',
+    videoLabel:'ไฮไลท์เดือนนี้',videoTitle:'คู่แข่งขันที่ดีที่สุด',liveTag:'สด',
+    v1title:'SEA Championship — รอบชิงชนะเลิศ',v1winner:'🥇 ShadowKnight_TH',v1date:'28 เม.ย. 2026',
+    v2title:'3 ดาวสมบูรณ์แบบ vs TH17 สูงสุด',v2winner:'🥇 DragonClan_VN',v2date:'26 เม.ย. 2026',
+    v3title:'การพลิกผลครั้งยิ่งใหญ่ของเดือน',v3winner:'🥇 StormRaider_ID',v3date:'24 เม.ย. 2026',
+    lbLabel:'อันดับเรียลไทม์',lbTitle:'ลีดเดอร์บอร์ดโลก',lbHeader:'ผู้จัดยอดเยี่ยม — เม.ย. 2026',
+    formPretitle:'ลงทะเบียนผู้จัดรายแรก',formTitle:'จองสิทธิ์ของคุณ',
+    formSub:'จำนวนจำกัด เป็นคนแรกที่เปิดทัวร์นาเมนต์บน ForgeArena',
+    progLabel:'ความสมบูรณ์ของโปรไฟล์',
+    labelName:'ชื่อ-นามสกุล',labelEmail:'อีเมล',labelCountry:'ประเทศ',
+    labelLang:'ภาษา',labelGame:'เกม / ชุมชน',labelChannel:'ช่องทางติดต่อ',
+    chipEmail:'อีเมล',labelHandle:'ยูสเซอร์เนม / ID',
+    submitBtn:'⚡ สมัครเป็นผู้จัดรายแรก',formNote:'ฟรี · ไม่ต้องบัตรเครดิต · จำนวนจำกัด',
+    successTitle:'คุณเข้าร่วมแล้ว',
+    successSub:'ยินดีต้อนรับสู่กลุ่มแรกของผู้จัด ForgeArena เราจะติดต่อในภาษาของคุณ',
+    successTag:'ลงทะเบียนสำเร็จ',selCountry:'เลือกประเทศ'
+  }
+};
+
+let lang = 'en';
+function setLang(l) {
+  lang = l;
+  const t = T[l] || T.en;
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k] !== undefined) el.innerHTML = t[k];
+  });
+  document.querySelectorAll('.lbtn').forEach(b => b.classList.remove('on'));
+  const ab = document.getElementById('btn-' + l);
+  if (ab) ab.classList.add('on');
+  const fl = document.getElementById('fLang');
+  if (fl) for (let o of fl.options) if (o.value === l) { fl.value = l; break; }
+  document.documentElement.lang = l;
+}
+function setLangFromSelect() {
+  const v = document.getElementById('fLang').value;
+  if (v) setLang(v);
+}
+function autoLang() {
+  const sel = document.getElementById('fCountry');
+  const opt = sel.options[sel.selectedIndex];
+  const dl = opt ? opt.getAttribute('data-lang') : null;
+  if (dl && T[dl]) setLang(dl);
+}
+
+// ====== PROGRESS ======
+function updateProg() {
+  const fields = ['fName','fEmail','fCountry','fLang','fGame'];
+  let filled = fields.filter(id => { const el = document.getElementById(id); return el && el.value.trim(); }).length;
+  const pct = Math.round((filled/fields.length)*100);
+  document.getElementById('progFill').style.width = pct + '%';
+  document.getElementById('progPct').textContent = pct + '%';
+}
+
+function toggleChip(el) { el.classList.toggle('on'); }
+
+function handleSubmit() {
+  const n = document.getElementById('fName').value.trim();
+  const e = document.getElementById('fEmail').value.trim();
+  if (!n || !e) return;
+  document.getElementById('formArea').style.display = 'none';
+  document.getElementById('successBox').style.display = 'block';
+  showToast('🎉', n + ' joined ForgeArena!', 'Early Organizer #' + (Math.floor(Math.random()*50)+200));
+}
+
+// ====== REAL-TIME STATS ======
+let online = 1247, newToday = 384, total = 12847, tournaments = 23;
+let prize = 128400;
+
+function fmtNum(n) { return n.toLocaleString(); }
+
+function updateStats() {
+  // Online fluctuates
+  online += Math.floor(Math.random()*6) - 2;
+  if (online < 1100) online = 1100;
+  // New today increases
+  if (Math.random() > 0.6) { newToday++; total++; }
+  // Tournaments fluctuate
+  if (Math.random() > 0.9) tournaments += Math.random() > 0.5 ? 1 : -1;
+  if (tournaments < 18) tournaments = 18;
+  if (tournaments > 30) tournaments = 30;
+  // Prize grows
+  prize += Math.floor(Math.random()*30) + 5;
+
+  document.getElementById('statOnline').innerHTML = fmtNum(online) + '<span class="stat-blink"></span>';
+  document.getElementById('statNew').textContent = '+' + fmtNum(newToday);
+  document.getElementById('statTotal').textContent = fmtNum(total);
+  document.getElementById('statTournament').textContent = tournaments;
+  document.getElementById('prizeAmount').textContent = fmtNum(prize);
+  document.getElementById('prizeSmall').textContent = '฿' + fmtNum(prize);
+}
+
+// Animate prize on load
+function animatePrize() {
+  let start = 100000, end = prize, dur = 2000;
+  let startTime = null;
+  function step(ts) {
+    if (!startTime) startTime = ts;
+    let p = Math.min((ts - startTime) / dur, 1);
+    let eased = 1 - Math.pow(1 - p, 3);
+    let cur = Math.floor(start + (end - start) * eased);
+    document.getElementById('prizeAmount').textContent = fmtNum(cur);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+setInterval(updateStats, 2800);
+setTimeout(animatePrize, 500);
+
+// ====== VIEW COUNTER ======
+let v1 = 24700, v2 = 18300, v3 = 11900;
+setInterval(() => {
+  if (Math.random() > 0.5) { v1 += Math.floor(Math.random()*3)+1; document.getElementById('v1views').textContent = (v1/1000).toFixed(1)+'K views'; }
+  if (Math.random() > 0.6) { v2 += Math.floor(Math.random()*2)+1; document.getElementById('v2views').textContent = (v2/1000).toFixed(1)+'K views'; }
+  if (Math.random() > 0.7) { v3 += Math.floor(Math.random()*2); document.getElementById('v3views').textContent = (v3/1000).toFixed(1)+'K views'; }
+}, 4000);
+
+// ====== CANVAS VIDEO THUMBNAILS ======
+function drawThumb(canvasId, colorA, colorB, label) {
+  const c = document.getElementById(canvasId);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  let t = 0;
+
+  function draw() {
+    ctx.fillStyle = '#080810';
+    ctx.fillRect(0,0,w,h);
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,61,0,0.08)';
+    ctx.lineWidth = 1;
+    for (let x=0;x<w;x+=24) { ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke(); }
+    for (let y=0;y<h;y+=24) { ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke(); }
+
+    // Animated bars (fake battle stats)
+    const bars = 6;
+    for (let i=0;i<bars;i++) {
+      const barH = 6;
+      const y = h - 40 + (i%2)*16;
+      const maxW = w - 40;
+      const bw = (Math.sin(t*0.05 + i*1.2)+1)/2 * maxW;
+      const grad = ctx.createLinearGradient(20,0,20+bw,0);
+      grad.addColorStop(0, colorA);
+      grad.addColorStop(1, colorB);
+      ctx.fillStyle = 'rgba(0,0,0,0.5)';
+      ctx.fillRect(20, y, maxW, barH);
+      ctx.fillStyle = grad;
+      ctx.fillRect(20, y, bw, barH);
+    }
+
+    // Waveform
+    ctx.beginPath();
+    ctx.strokeStyle = colorA;
+    ctx.lineWidth = 1.5;
+    ctx.globalAlpha = 0.5;
+    for (let x=0;x<w;x++) {
+      const y2 = h/2 + Math.sin((x + t)*0.08)*15 + Math.sin((x + t)*0.2)*5;
+      if (x===0) ctx.moveTo(x,y2); else ctx.lineTo(x,y2);
+    }
+    ctx.stroke();
+    ctx.globalAlpha = 1;
+
+    // Stars
+    for (let s=0;s<20;s++) {
+      const sx = (s*137.5 + t*0.3) % w;
+      const sy = (s*73.1 + t*0.1) % h;
+      const sr = Math.abs(Math.sin(t*0.02+s)) * 1.5;
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.beginPath();ctx.arc(sx,sy,sr,0,Math.PI*2);ctx.fill();
+    }
+
+    // Clash elements (simplified)
+    ctx.font = 'bold 11px Rajdhani, sans-serif';
+    ctx.fillStyle = colorA;
+    ctx.globalAlpha = 0.8;
+    ctx.fillText('TH17 ████ ' + Math.floor(Math.abs(Math.sin(t*0.03))*100) + '%', 20, 24);
+    ctx.fillText('STARS: ★★★', 20, 40);
+    ctx.globalAlpha = 1;
+
+    // Flash effect occasionally
+    if (Math.floor(t/30) % 8 === 0) {
+      ctx.fillStyle = 'rgba(255,255,255,0.05)';
+      ctx.fillRect(0,0,w,h);
+    }
+
+    t++;
+    requestAnimationFrame(draw);
+  }
+  draw();
+}
+
+drawThumb('vc1','#FF3D00','#FFB300','FINAL');
+drawThumb('vc2','#FFB300','#FF6600','TOP PLAY');
+drawThumb('vc3','#9C27B0','#FF3D00','UPSET');
+
+function playVideo(n) {
+  const titles = {1:'SEA Championship Final',2:'Perfect 3-Star vs TH17',3:"Month's Biggest Upset"};
+  showToast('▶', 'Playing: ' + titles[n], 'Upload your match video to appear here');
+}
+
+// ====== LEADERBOARD ======
+const lbData = [
+  {rank:1,name:'ShadowKnight_TH',country:'🇹🇭',score:'4,820',init:'S'},
+  {rank:2,name:'DragonClan_VN',country:'🇻🇳',score:'4,610',init:'D'},
+  {rank:3,name:'StormRaider_ID',country:'🇮🇩',score:'4,405',init:'S'},
+  {rank:4,name:'PhoenixClash_JP',country:'🇯🇵',score:'4,190',init:'P'},
+  {rank:5,name:'IronForge_KR',country:'🇰🇷',score:'3,980',init:'I'},
+];
+
+function renderLB() {
+  const el = document.getElementById('lbBody');
+  el.innerHTML = lbData.map(r => `
+    <div class="lb-row" style="animation-delay:${r.rank*0.1}s">
+      <div class="lb-rank ${r.rank<=3?'top':''}">${r.rank<=3?['🥇','🥈','🥉'][r.rank-1]:r.rank}</div>
+      <div class="lb-avatar">${r.init}</div>
+      <div class="lb-name">${r.name}</div>
+      <div class="lb-country">${r.country}</div>
+      <div class="lb-score">${r.score}</div>
+    </div>
+  `).join('');
+}
+
+// Simulate live updates
+let lbTimer = 0;
+setInterval(() => {
+  lbTimer++;
+  if (lbTimer % 5 === 0) {
+    lbData.forEach(r => {
+      const d = Math.floor(Math.random()*20)-5;
+      const cur = parseInt(r.score.replace(',',''));
+      r.score = (cur+d).toLocaleString();
+    });
+    lbData.sort((a,b) => parseInt(b.score.replace(',','')) - parseInt(a.score.replace(',','')));
+    lbData.forEach((r,i) => r.rank = i+1);
+    renderLB();
+  }
+}, 1000);
+
+renderLB();
+
+// ====== TOAST NOTIFICATIONS ======
+const toastEvents = [
+  {icon:'🏆',title:'ClanMaster_TH',sub:'just won ฿1,800 in Weekly Cup'},
+  {icon:'⚡',title:'New Tournament',sub:'SEA Open Series — 48 spots left'},
+  {icon:'🔥',title:'FireBolt_VN',sub:'achieved 3-Star Perfect Attack'},
+  {icon:'💰',title:'Prize Pool Updated',sub:'VIP Pool grew by ฿340 this hour'},
+  {icon:'🎮',title:'NightOwl_ID',sub:'joined as Early Organizer #247'},
+  {icon:'⭐',title:'PhoenixGuild_JP',sub:'won Monthly League Championship'},
+];
+let toastIdx = 0;
+
+function showToast(icon, title, sub) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastIcon').textContent = icon;
+  document.getElementById('toastTitle').textContent = title;
+  document.getElementById('toastSub').textContent = sub;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 4000);
+}
+
+// Auto notifications
+setTimeout(() => {
+  setInterval(() => {
+    const ev = toastEvents[toastIdx % toastEvents.length];
+    showToast(ev.icon, ev.title, ev.sub);
+    toastIdx++;
+  }, 12000);
+}, 5000);
+
+// First toast after 3s
+setTimeout(() => showToast('🔥','ForgeArena is LIVE','Early Organizer spots are filling up fast!'), 3000);
+
+setLang('en');
+</script>
+
+</body>
+</html>
