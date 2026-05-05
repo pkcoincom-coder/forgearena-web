@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>OTP Test</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+body{background:#0a0a0a;color:#fff;font-family:Arial;padding:20px;}
+input{width:100%;padding:12px;background:#000;color:#fff;border:1px solid #444;margin:8px 0;font-size:16px;box-sizing:border-box;}
+button{width:100%;padding:14px;background:#FF6600;color:#fff;border:none;font-size:16px;font-weight:700;margin:8px 0;cursor:pointer;}
+button.green{background:#00C853;color:#000;}
+.result{background:#000;padding:12px;margin:8px 0;font-family:monospace;font-size:12px;white-space:pre-wrap;color:#0f0;min-height:60px;border:1px solid #333;}
+.error{color:#f55;}
+h2{color:#FFD700;}
+hr{border-color:#333;margin:20px 0;}
+</style>
+</head>
+<body>
+<h2>🔧 Debug Test</h2>
+
+<p>Email:</p>
+<input type="email" id="email" value="pksmile7@gmail.com">
+
+<button class="green" onclick="testDB()">1. TEST DB DIRECT (Anon Key)</button>
+<div class="result" id="dbResult">Click button to test...</div>
+
+<hr>
+
+<button onclick="testSendOTP()">2. TEST SEND OTP (Edge Function)</button>
+<div class="result" id="sendResult">Click button to test...</div>
+
+<hr>
+
+<p>OTP Code (from email):</p>
+<input type="text" id="otpCode" placeholder="123456" maxlength="6">
+<button onclick="testVerifyOTP()">3. TEST VERIFY OTP</button>
+<div class="result" id="verifyResult">Click button to test...</div>
+
+<script>
+const SUPABASE_URL = 'https://dfbrqporbfiaaejeofmr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYnJxcG9yYmZpYWFlamVvZm1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk2MDksImV4cCI6MjA5Mjc3NTYwOX0.lTGzd69csS0BiMbjYDCDVqB4ANcCWrzgZKdSHgBDFuc';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function testDB() {
+  const el = document.getElementById('dbResult');
+  el.className = 'result';
+  el.textContent = '⏳ Querying database directly...';
+  const email = document.getElementById('email').value.trim().toLowerCase();
+  try {
+    const { data, error } = await sb.from('waitlist').select('email,affiliate_code,virtual_pkc_balance').eq('email', email).maybeSingle();
+    if (error) {
+      el.className = 'result error';
+      el.textContent = 'DB ERROR:\n' + JSON.stringify(error, null, 2);
+      return;
+    }
+    if (!data) {
+      el.className = 'result error';
+      el.textContent = 'NOT FOUND in database!\nEmail: ' + email;
+      return;
+    }
+    el.textContent = 'FOUND ✅\n\n' + JSON.stringify(data, null, 2);
+  } catch(err) {
+    el.className = 'result error';
+    el.textContent = 'ERROR: ' + err.message;
+  }
+}
+
+async function testSendOTP() {
+  const el = document.getElementById('sendResult');
+  el.className = 'result';
+  el.textContent = '⏳ Calling send-otp Edge Function...';
+  const email = document.getElementById('email').value;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/send-otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'apikey': SUPABASE_KEY,
+      },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    el.className = 'result' + (data.success ? '' : ' error');
+    el.textContent = `Status: ${res.status}\n\n${JSON.stringify(data, null, 2)}`;
+  } catch (err) {
+    el.className = 'result error';
+    el.textContent = 'ERROR: ' + err.message;
+  }
+}
+
+async function testVerifyOTP() {
+  const el = document.getElementById('verifyResult');
+  el.className = 'result';
+  el.textContent = '⏳ Calling verify-otp...';
+  const email = document.getElementById('email').value;
+  const code = document.getElementById('otpCode').value;
+  try {
+    const res = await fetch(`${SUPABASE_URL}/functions/v1/verify-otp`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${SUPABASE_KEY}`,
+        'apikey': SUPABASE_KEY,
+      },
+      body: JSON.stringify({ email, code }),
+    });
+    const data = await res.json();
+    el.className = 'result' + (data.success ? '' : ' error');
+    el.textContent = `Status: ${res.status}\n\n${JSON.stringify(data, null, 2)}`;
+  } catch (err) {
+    el.className = 'result error';
+    el.textContent = 'ERROR: ' + err.message;
+  }
+}
+</script>
+</body>
+</html>
