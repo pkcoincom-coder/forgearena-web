@@ -1783,8 +1783,29 @@ if (currentUser) updateDailyButton();
 
 // ============= AUTO LOGIN =============
 window.addEventListener(‘load’, async () => {
-const savedEmail = localStorage.getItem(‘forge_dash_email’);
-const savedToken = localStorage.getItem(‘forge_session_token’);
+// Workaround: Check URL params first (more reliable than localStorage)
+const urlParams = new URLSearchParams(window.location.search);
+const urlEmail = urlParams.get(‘e’);
+const urlToken = urlParams.get(‘t’);
+const urlBonus = urlParams.get(‘b’);
+
+let savedEmail = localStorage.getItem(‘forge_dash_email’);
+
+// If URL has email, use that (and save to localStorage)
+if (urlEmail && urlToken) {
+savedEmail = urlEmail.toLowerCase();
+try {
+localStorage.setItem(‘forge_dash_email’, savedEmail);
+localStorage.setItem(‘forge_session_token’, urlToken);
+if (urlBonus) {
+localStorage.setItem(‘forge_show_welcome_bonus’, urlBonus);
+}
+} catch(_) {}
+// Clean URL after reading params
+const cleanUrl = window.location.pathname;
+window.history.replaceState({}, ‘’, cleanUrl);
+}
+
 if (savedEmail) {
 try {
 const { data, error } = await sb.from(‘waitlist’).select(’*’).eq(‘email’, savedEmail).maybeSingle();
@@ -1793,7 +1814,6 @@ currentUser = data;
 showDashboard();
 } else {
 console.warn(‘User not found in waitlist:’, savedEmail, error);
-// Clear invalid session
 localStorage.removeItem(‘forge_dash_email’);
 localStorage.removeItem(‘forge_session_token’);
 }

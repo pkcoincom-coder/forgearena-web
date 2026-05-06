@@ -3037,7 +3037,14 @@ async function welcomeVerify() {
     if (wgOtpTimer) clearInterval(wgOtpTimer);
     if (typeof playSound === 'function') playSound('success');
     setTimeout(() => {
-      window.location.href = '/dashboard.html';
+      // Workaround: pass email and bonus flag via URL params
+      // (in case localStorage doesn't persist across redirect on some browsers)
+      const token = btoa(wgPendingEmail + ':' + Date.now());
+      const params = new URLSearchParams();
+      params.set('e', wgPendingEmail);
+      params.set('t', token);
+      if (bonusGranted) params.set('b', '100');
+      window.location.href = '/dashboard.html?' + params.toString();
     }, bonusGranted ? 1500 : 600);
   } catch(err) { msg.style.color = '#ff4444'; msg.textContent = '❌ ' + err.message; }
 }
