@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+
+<html lang="en" style="color-scheme:dark;" class="notranslate" translate="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="dark">
+<meta name="google" content="notranslate">
+<style>:root{color-scheme:dark only;}html,body{background-color:#060608!important;}</style>
+<title>ForgeArena — Global Esports Platform</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Barlow+Condensed:wght@300;400;600;700;900&family=Barlow:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+html{background:#060608!important;color-scheme:dark only;scroll-behavior:smooth;-webkit-text-size-adjust:100%;}
+body{background:#060608!important;color:#EEEEF2!important;font-family:'Barlow',sans-serif;overflow-x:hidden;min-height:100vh;-webkit-font-smoothing:antialiased;}
+:root{
+  --black:#060608;--deep:#0a0a0d;--panel:#0d0d11;--card:#111116;
+  --border:rgba(255,255,255,0.07);--fire:#FF3D00;--fire2:#FF6600;
+  --gold:#FFB300;--white:#EEEEF2;--muted:#555560;--sub:#888896;
+  --green:#00C853;
+}
+body::after{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,0,0,0.04) 2px,rgba(0,0,0,0.04) 4px);pointer-events:none;z-index:9998;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;padding:0 20px;background:rgba(6,6,8,0.96);border-bottom:1px solid var(–border);z-index:200;gap:12px;}
+.logo{font-family:‘Rajdhani’,‘Arial Black’,sans-serif !important;font-weight:900 !important;text-transform:uppercase;flex:1;line-height:1;display:flex;flex-direction:column;gap:3px;align-items:flex-start;}
+.logo-top{display:inline-block;font-size:22px;letter-spacing:3px;color:#ffffff !important;line-height:1;}
+.logo em{display:inline-block;font-style:normal;font-weight:900 !important;font-size:18px;letter-spacing:6px;color:#FFD700 !important;-webkit-text-fill-color:#FFD700 !important;line-height:1;}
+
+/* NAV ACTION BUTTONS */
+.nav-action-btn{
+padding:8px 12px;
+font-family:‘Barlow Condensed’,sans-serif;
+font-size:11px;letter-spacing:1.5px;
+text-transform:uppercase;
+text-decoration:none;
+font-weight:700;
+transition:all .2s;
+white-space:nowrap;
+border-radius:4px;
+cursor:pointer;
+display:inline-block;
+}
+.nav-signin{
+background:rgba(255,102,0,.15);
+border:1px solid rgba(255,102,0,.4);
+color:#FF6600 !important;
+}
+.nav-signin:hover{background:rgba(255,102,0,.25);border-color:#FF6600;}
+.nav-join{
+background:rgba(255,215,0,.12);
+border:1px solid rgba(255,215,0,.3);
+color:#FFD700 !important;
+}
+.nav-join:hover{background:rgba(255,215,0,.22);border-color:#FFD700;}
+.nav-action-btn:active{transform:scale(.95);}
+
+/* LANG */
+.lang-strip{position:fixed;top:64px;left:0;right:0;background:rgba(6,6,8,0.95);border-bottom:1px solid rgba(255,61,0,0.15);display:flex;align-items:center;padding:5px 20px;gap:2px;z-index:199;overflow-x:auto;}
+.lang-strip::-webkit-scrollbar{display:none;}
+.lbtn{background:transparent;border:none;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:1px;color:var(–muted);padding:4px 8px;cursor:pointer;transition:all .15s;white-space:nowrap;border-bottom:2px solid transparent;}
+.lbtn:hover{color:var(–white);}
+.lbtn.on{color:var(–fire);border-bottom-color:var(–fire);}
+
+/* HERO */
+.hero{padding-top:108px;min-height:100vh;display:flex;flex-direction:column;position:relative;overflow:hidden;}
+.hero-glow{position:absolute;inset:0;background:radial-gradient(ellipse 80% 50% at 50% 80%,rgba(255,61,0,.12) 0%,transparent 70%);pointer-events:none;}
+.hero-top{padding:20px 20px 0;text-align:center;position:relative;z-index:2;}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:4px;text-transform:uppercase;color:var(–fire);margin-bottom:20px;}
+.eyebrow::before,.eyebrow::after{content:’’;width:20px;height:1px;background:var(–fire);}
+.hero-title{font-family:‘Barlow Condensed’,sans-serif;font-weight:900;font-size:clamp(56px,14vw,100px);line-height:.88;text-transform:uppercase;letter-spacing:-2px;margin-bottom:16px;}
+.hero-title .t1{display:block;color:transparent !important;-webkit-text-fill-color:transparent !important;-webkit-text-stroke:2.5px #FFD700;filter:drop-shadow(0 2px 8px rgba(255,215,0,.3));}
+.hero-title .t2{display:block;color:#FFD700 !important;-webkit-text-fill-color:#FFD700 !important;-webkit-text-stroke:2.5px #FF6600;font-size:.85em;filter:drop-shadow(0 2px 8px rgba(255,102,0,.4));}
+.hero-sub{font-size:14px;font-weight:300;color:var(–sub);max-width:400px;margin:0 auto 24px;line-height:1.7;}
+.hero-sub strong{color:var(–white);font-weight:500;}
+
+/* TICKER */
+.ticker-wrap{background:rgba(255,61,0,.08);border-top:1px solid rgba(255,61,0,.15);border-bottom:1px solid rgba(255,61,0,.15);overflow:hidden;padding:8px 0;position:relative;}
+.ticker{display:flex;gap:40px;animation:ticker 30s linear infinite;width:max-content;}
+@keyframes ticker{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+.ticker-item{font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(–fire);white-space:nowrap;display:flex;align-items:center;gap:8px;}
+.ticker-sep{color:var(–gold);}
+
+/* STATS */
+.stats-bar{display:flex;background:rgba(13,13,17,.98);border-top:1px solid var(–border);border-bottom:1px solid var(–border);position:relative;z-index:2;overflow-x:auto;}
+.stats-bar::-webkit-scrollbar{display:none;}
+.stat-cell{flex:1;min-width:90px;padding:14px 12px;border-right:1px solid var(–border);text-align:center;}
+.stat-cell:last-child{border-right:none;}
+.stat-cell .slabel{font-family:‘Barlow Condensed’,sans-serif;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(–muted);margin-bottom:4px;display:block;}
+.stat-cell .sval{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:20px;color:var(–white);line-height:1;display:block;}
+.stat-cell.fire .sval{color:var(–fire);}
+.stat-cell.gold .sval{color:var(–gold);}
+.stat-cell.green .sval{color:#00ff88;}
+.stat-blink{display:inline-block;width:5px;height:5px;background:#00ff88;border-radius:50%;vertical-align:middle;margin-left:4px;animation:livepulse 1.2s ease infinite;}
+@keyframes livepulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+/* PRIZE */
+.prize-hero{background:linear-gradient(135deg,rgba(255,61,0,.08),rgba(255,179,0,.05));border:1px solid rgba(255,179,0,.15);margin:16px;padding:20px;text-align:center;position:relative;overflow:hidden;}
+.prize-hero::before{content:’’;position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(–gold),var(–fire),var(–gold),transparent);}
+.prize-label{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(–gold);margin-bottom:8px;}
+.prize-amount{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:clamp(40px,10vw,64px);color:var(–gold);text-shadow:0 0 40px rgba(255,179,0,.4);line-height:1;}
+.prize-currency-pre{font-family:‘Rajdhani’,sans-serif;font-size:clamp(28px,7vw,44px);font-weight:700;color:var(–gold);margin-right:4px;}
+.prize-amount-wrap{display:inline-block;margin:8px 0;}
+.prize-tabs{display:flex;gap:4px;margin:14px 0 8px;justify-content:center;flex-wrap:wrap;}
+.ptab{background:rgba(255,255,255,.04);border:1px solid var(–border);color:var(–sub);padding:5px 11px;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.ptab.active{background:rgba(255,179,0,.15);border-color:rgba(255,179,0,.5);color:var(–gold);}
+.prize-note{font-size:11px;color:var(–muted);margin-top:6px;font-family:‘Barlow Condensed’,sans-serif;letter-spacing:2px;}
+.prize-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.2);padding:4px 12px;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(–gold);margin-top:10px;}
+
+/* SECTION */
+.section-head{padding:20px 20px 12px;display:flex;align-items:center;gap:12px;}
+.section-label{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:4px;text-transform:uppercase;color:var(–fire);}
+.section-title{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:var(–white);}
+.sep{flex:1;height:1px;background:var(–border);}
+.live-tag{display:flex;align-items:center;gap:5px;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:2px;color:#00ff88;}
+.live-dot{width:6px;height:6px;background:#00ff88;border-radius:50%;animation:livepulse 1.5s ease infinite;}
+
+/* VIDEO */
+.video-scroll{display:flex;gap:12px;padding:0 20px 16px;overflow-x:auto;}
+.video-scroll::-webkit-scrollbar{display:none;}
+.video-card{flex:0 0 260px;background:var(–card);border:1px solid var(–border);overflow:hidden;cursor:pointer;transition:all .2s;position:relative;}
+.video-thumb{width:100%;height:148px;background:#0d0d11;position:relative;display:flex;align-items:center;justify-content:center;}
+.video-thumb canvas{position:absolute;inset:0;width:100%;height:100%;}
+.play-btn{position:absolute;width:40px;height:40px;background:rgba(255,61,0,.9);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;z-index:2;}
+.video-badge{position:absolute;top:8px;left:8px;background:var(–fire);font-family:‘Barlow Condensed’,sans-serif;font-size:9px;letter-spacing:2px;padding:2px 8px;color:white;z-index:2;}
+.video-views{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.7);font-family:‘Barlow Condensed’,sans-serif;font-size:10px;color:rgba(255,255,255,.7);padding:2px 8px;z-index:2;}
+.video-info{padding:10px 12px;}
+.video-title{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(–white);margin-bottom:5px;}
+.video-meta{display:flex;justify-content:space-between;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;color:var(–muted);}
+.video-winner{color:var(–gold);}
+
+/* LEADERBOARD */
+.leaderboard{margin:0 16px 16px;background:var(–card);border:1px solid var(–border);}
+.lb-header{padding:12px 16px;background:rgba(255,61,0,.08);border-bottom:1px solid var(–border);display:flex;align-items:center;gap:8px;}
+.lb-title{font-family:‘Barlow Condensed’,sans-serif;font-weight:700;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(–fire);flex:1;}
+.lb-row{display:flex;align-items:center;padding:10px 16px;border-bottom:1px solid rgba(255,255,255,.04);}
+.lb-rank{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:16px;width:32px;color:var(–muted);}
+.lb-rank.top{color:var(–gold);}
+.lb-avatar{width:28px;height:28px;background:linear-gradient(135deg,var(–fire),var(–gold));display:flex;align-items:center;justify-content:center;font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:12px;color:white;margin-right:10px;}
+.lb-name{flex:1;font-family:‘Barlow Condensed’,sans-serif;font-size:14px;letter-spacing:1px;color:var(–white);}
+.lb-country{font-size:14px;margin-right:6px;}
+.lb-score{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:16px;color:var(–gold);}
+
+/* ===== JOIN POPUP (FIXED) ===== */
+.join-overlay{
+position:fixed;
+top:0;left:0;right:0;bottom:0;
+background:rgba(0,0,0,.95);
+-webkit-backdrop-filter:blur(8px);
+backdrop-filter:blur(8px);
+z-index:99998;
+display:none;
+align-items:center;
+justify-content:center;
+padding:20px;
+}
+.join-overlay.show{display:flex;}
+.join-box{
+background:linear-gradient(180deg,#0d0d0e,#111114);
+border:1px solid rgba(255,102,0,.3);
+border-top:3px solid #FF6600;
+border-radius:8px;
+max-width:400px;
+width:100%;
+padding:36px 28px;
+text-align:center;
+position:relative;
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+animation:joinIn .3s ease;
+}
+@keyframes joinIn{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.join-close{
+position:absolute;top:12px;right:14px;
+width:32px;height:32px;
+background:rgba(255,255,255,.06);
+border:1px solid rgba(255,255,255,.15);
+color:#fff;border-radius:50%;
+font-size:14px;cursor:pointer;
+display:flex;align-items:center;justify-content:center;
+transition:all .2s;
+}
+.join-close:hover{background:rgba(255,68,68,.2);border-color:rgba(255,68,68,.4);}
+
+.join-logo{margin-bottom:18px;font-family:‘Rajdhani’,sans-serif;font-weight:900;}
+.join-logo .l1{display:block;font-size:30px;letter-spacing:4px;color:transparent;-webkit-text-stroke:2px #FFD700;}
+.join-logo .l2{display:block;font-size:24px;letter-spacing:6px;color:#FFD700;-webkit-text-stroke:2px #FF6600;}
+.join-tag{font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:3px;color:#FF6600;text-transform:uppercase;margin-bottom:10px;font-weight:700;}
+.join-title{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:18px;color:#fff;margin-bottom:18px;}
+
+.join-input{
+width:100%;
+padding:13px;
+background:#000;
+color:#fff;
+border:2px solid rgba(255,255,255,.15);
+font-size:14px;
+outline:none;
+margin-bottom:6px;
+font-family:‘Barlow’,sans-serif;
+border-radius:4px;
+}
+.join-input:focus{border-color:#FF6600;}
+.join-status{font-size:11px;color:#888;text-align:left;margin-bottom:10px;min-height:18px;}
+.join-btn{
+width:100%;
+padding:14px;
+background:linear-gradient(100deg,#FFD700,#FFB300);
+color:#000;
+border:none;
+font-family:‘Rajdhani’,sans-serif;
+font-weight:900;
+font-size:15px;
+letter-spacing:2px;
+cursor:pointer;
+margin-bottom:8px;
+border-radius:4px;
+text-transform:uppercase;
+}
+.join-msg{text-align:center;font-size:12px;min-height:18px;margin-bottom:8px;}
+.join-otp-input{
+width:100%;
+padding:14px;
+background:#000;
+color:#FFD700;
+border:2px solid rgba(255,215,0,.3);
+font-size:28px;
+font-weight:900;
+font-family:monospace;
+letter-spacing:10px;
+text-align:center;
+outline:none;
+margin-bottom:12px;
+border-radius:4px;
+}
+.join-otp-display{
+background:rgba(255,215,0,.08);
+border:1px solid rgba(255,215,0,.2);
+padding:12px;
+margin-bottom:10px;
+text-align:center;
+border-radius:4px;
+}
+.join-otp-display .lbl{font-size:10px;letter-spacing:2px;color:#888;font-family:‘Barlow Condensed’,sans-serif;text-transform:uppercase;margin-bottom:4px;}
+.join-otp-display .code{font-size:30px;font-weight:900;color:#FFD700;letter-spacing:8px;font-family:monospace;}
+.join-verify-btn{
+width:100%;
+padding:14px;
+background:linear-gradient(100deg,#FF6600,#ff5500);
+color:#fff;
+border:none;
+font-family:‘Rajdhani’,sans-serif;
+font-weight:900;
+font-size:15px;
+letter-spacing:2px;
+cursor:pointer;
+margin-bottom:8px;
+border-radius:4px;
+text-transform:uppercase;
+}
+.join-timer{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:1.5px;color:#FFB300;text-align:center;margin-bottom:8px;}
+.join-link{font-size:11px;color:#888;margin-top:10px;}
+.join-link a{color:#FF6600;text-decoration:none;font-weight:700;}
+
+/* SOUND TOGGLE */
+.sound-toggle{
+background:rgba(255,255,255,.06) !important;
+border:1px solid var(–border);
+width:36px;height:36px;
+display:flex;align-items:center;justify-content:center;
+cursor:pointer;font-size:16px;
+border-radius:50%;
+transition:all .2s;
+color:var(–white) !important;
+}
+.sound-toggle:hover{background:rgba(255,61,0,.15) !important;border-color:var(–fire);}
+
+footer{padding:24px 20px;border-top:1px solid var(–border);text-align:center;}
+footer .logo{font-size:18px;margin-bottom:8px;}
+.foot-text{font-size:11px;color:var(–muted);letter-spacing:1px;}
+
+.eyebrow, .section-label, .prize-label, .ptab.active, .lbtn.on, .live-tag { color: #FF6600 !important; }
+.prize-amount, .prize-currency-pre, .lb-rank.top, .lb-score { color: #FFB300 !important; }
+.live-dot, .stat-cell.green .sval { color: #00ff88 !important; }
+</style>
+
+</head>
+<body>
+
+<!-- JOIN POPUP (Opens only via JOIN button) -->
+
+<div class="join-overlay" id="joinPopup">
+  <div class="join-box">
+    <button class="join-close" onclick="closeJoinPopup()">✕</button>
+
+```
+<!-- Register Step -->
+<div id="joinStepRegister">
+  <div class="join-logo">
+    <span class="l1">FORGE</span>
+    <span class="l2">ARENA</span>
+  </div>
+  <div class="join-tag">🎯 RESERVE YOUR SPOT</div>
+  <div class="join-title">Join the Waitlist</div>
+  <input type="email" id="joinEmail" class="join-input" placeholder="your@email.com">
+  <div class="join-status" id="joinStatus"></div>
+  <button class="join-btn" id="joinBtn" onclick="doJoinRegister()">RESERVE & GET CODE</button>
+  <div class="join-msg" id="joinMsg"></div>
+  <div class="join-link">
+    Already registered? <a href="/dashboard.html">→ Sign In</a>
+  </div>
+</div>
+
+<!-- OTP Step -->
+<div id="joinStepOTP" style="display:none;">
+  <div class="join-title">🔐 Enter Code</div>
+  <div style="font-size:11px;color:#888;margin-bottom:14px;" id="joinOtpEmailLabel">Sent to your email</div>
+  <input type="text" id="joinOtpCode" maxlength="6" inputmode="numeric" pattern="[0-9]*" autocomplete="one-time-code" placeholder="000000" class="join-otp-input">
+  <div class="join-otp-display" id="joinOtpDisplay" style="display:none;">
+    <div class="lbl">Your Code:</div>
+    <div class="code" id="joinOtpCodeDisplay"></div>
+  </div>
+  <button class="join-verify-btn" onclick="doJoinVerify()">✅ VERIFY & ENTER</button>
+  <div class="join-msg" id="joinOtpMsg"></div>
+  <div class="join-timer" id="joinOtpTimer"></div>
+</div>
+```
+
+  </div>
+</div>
+
+<!-- NAV -->
+
+<nav>
+  <div class="logo"><span class="logo-top">FORGE</span><em>ARENA</em></div>
+  <div style="display:flex;align-items:center;gap:8px;">
+    <a href="/dashboard.html" class="nav-action-btn nav-signin">🔐 SIGN IN</a>
+    <button onclick="openJoinPopup()" class="nav-action-btn nav-join">🎯 JOIN</button>
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()">🔊</button>
+  </div>
+</nav>
+
+<!-- LANG -->
+
+<div class="lang-strip">
+  <button class="lbtn on" onclick="setLang('en')" id="btn-en">🇬🇧 EN</button>
+  <button class="lbtn" onclick="setLang('th')" id="btn-th">🇹🇭 TH</button>
+  <button class="lbtn" onclick="setLang('vi')" id="btn-vi">🇻🇳 VI</button>
+  <button class="lbtn" onclick="setLang('id')" id="btn-id">🇮🇩 ID</button>
+  <button class="lbtn" onclick="setLang('ms')" id="btn-ms">🇲🇾 MY</button>
+  <button class="lbtn" onclick="setLang('ph')" id="btn-ph">🇵🇭 PH</button>
+  <button class="lbtn" onclick="setLang('ja')" id="btn-ja">🇯🇵 JA</button>
+  <button class="lbtn" onclick="setLang('ko')" id="btn-ko">🇰🇷 KO</button>
+  <button class="lbtn" onclick="setLang('zh')" id="btn-zh">🇨🇳 ZH</button>
+  <button class="lbtn" onclick="setLang('ar')" id="btn-ar">🇸🇦 AR</button>
+  <button class="lbtn" onclick="setLang('pt')" id="btn-pt">🇧🇷 PT</button>
+  <button class="lbtn" onclick="setLang('de')" id="btn-de">🇩🇪 DE</button>
+</div>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="hero-top">
+    <div class="eyebrow" data-i18n="eyebrow">Global Esports Platform</div>
+    <h1 class="hero-title">
+      <span class="t1">FORGE</span>
+      <span class="t2">ARENA</span>
+    </h1>
+    <p class="hero-sub" data-i18n="heroDesc">The <strong>first platform</strong> built for tournament organizers worldwide. Any game. Any scale.</p>
+  </div>
+
+  <!-- TICKER -->
+
+  <div class="ticker-wrap">
+    <div class="ticker">
+      <div class="ticker-item">🏆 ShadowKnight_TH won $80 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ SEA Championship #47 — 48 slots left <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🔥 DragonClan_VN joined ForgeArena <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🥇 StormRaider_ID reached #1 Global <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">💰 VIP Prize Pool: $428,400 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🏆 PhoenixClash_JP won $107 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ CoC_Masters_KR joined as Organizer <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🏆 ShadowKnight_TH won $80 <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">⚡ SEA Championship #47 — 48 slots left <span class="ticker-sep">◆</span></div>
+      <div class="ticker-item">🔥 DragonClan_VN joined ForgeArena <span class="ticker-sep">◆</span></div>
+    </div>
+  </div>
+
+  <!-- STATS -->
+
+  <div class="stats-bar">
+    <div class="stat-cell green">
+      <span class="slabel" data-i18n="stat1">Online Now</span>
+      <span class="sval" id="statOnline">1,247<span class="stat-blink"></span></span>
+    </div>
+    <div class="stat-cell fire">
+      <span class="slabel" data-i18n="stat2">New Today</span>
+      <span class="sval" id="statNew">+384</span>
+    </div>
+    <div class="stat-cell">
+      <span class="slabel" data-i18n="stat3">Members</span>
+      <span class="sval" id="statTotal">12,847</span>
+    </div>
+    <div class="stat-cell gold">
+      <span class="slabel" data-i18n="stat4">Live</span>
+      <span class="sval" id="statTournament">23</span>
+    </div>
+  </div>
+
+  <!-- PRIZE -->
+
+  <div class="prize-hero">
+    <div class="prize-label" data-i18n="prizeLabel">⚡ VIP PRIZE POOL</div>
+    <div class="prize-tabs">
+      <button class="ptab active" onclick="switchPrize('yearly',this)" data-i18n="ptabYearly">Yearly</button>
+      <button class="ptab" onclick="switchPrize('half',this)" data-i18n="ptabHalf">6 Months</button>
+      <button class="ptab" onclick="switchPrize('quarter',this)" data-i18n="ptabQuarter">3 Months</button>
+      <button class="ptab" onclick="switchPrize('month',this)" data-i18n="ptabMonth">1 Month</button>
+    </div>
+    <div class="prize-amount-wrap">
+      <span class="prize-currency-pre">$</span>
+      <span class="prize-amount" id="prizeAmount">428,400</span>
+    </div>
+    <div class="prize-note" id="prizeNote">⭐ Annual Grand Prize · Reset Every Year</div>
+    <div class="prize-badge">🔒 VIP Members Only</div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+
+<div class="section-head">
+  <div>
+    <div class="section-label" data-i18n="videoLabel">Best Matches</div>
+    <div class="section-title" data-i18n="videoTitle">Top Highlights</div>
+  </div>
+  <div class="sep"></div>
+  <div class="live-tag"><div class="live-dot"></div> LIVE</div>
+</div>
+<div class="video-scroll">
+  <div class="video-card" onclick="playVideo(1)">
+    <div class="video-thumb"><canvas id="vc1" width="260" height="148"></canvas><div class="video-badge">🏆 FINAL</div><div class="play-btn">▶</div><div class="video-views">24.7K views</div></div>
+    <div class="video-info"><div class="video-title">SEA Championship Final</div><div class="video-meta"><span class="video-winner">🥇 ShadowKnight_TH</span><span>Apr 28</span></div></div>
+  </div>
+  <div class="video-card" onclick="playVideo(2)">
+    <div class="video-thumb"><canvas id="vc2" width="260" height="148"></canvas><div class="video-badge" style="background:#FFB300;color:#000;">🔥 TOP</div><div class="play-btn">▶</div><div class="video-views">18.3K views</div></div>
+    <div class="video-info"><div class="video-title">Perfect 3-Star vs TH17</div><div class="video-meta"><span class="video-winner">🥇 DragonClan_VN</span><span>Apr 26</span></div></div>
+  </div>
+  <div class="video-card" onclick="playVideo(3)">
+    <div class="video-thumb"><canvas id="vc3" width="260" height="148"></canvas><div class="video-badge" style="background:#9C27B0;">⚡ UPSET</div><div class="play-btn">▶</div><div class="video-views">11.9K views</div></div>
+    <div class="video-info"><div class="video-title">Biggest Upset of Month</div><div class="video-meta"><span class="video-winner">🥇 StormRaider_ID</span><span>Apr 24</span></div></div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+
+<div class="section-head" style="padding-top:8px;">
+  <div><div class="section-label" data-i18n="lbLabel">Rankings</div><div class="section-title" data-i18n="lbTitle">Global Leaderboard</div></div>
+  <div class="sep"></div>
+  <div class="live-tag"><div class="live-dot"></div> LIVE</div>
+</div>
+<div class="leaderboard">
+  <div class="lb-header"><div class="lb-title" data-i18n="lbHeader">Top Organizers — April 2026</div></div>
+  <div id="lbBody"></div>
+</div>
+
+<footer>
+  <div class="logo"><span class="logo-top">FORGE</span><em>ARENA</em></div>
+  <p class="foot-text">forgearena.net · © 2026 ForgeArena</p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://dfbrqporbfiaaejeofmr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYnJxcG9yYmZpYWFlamVvZm1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk2MDksImV4cCI6MjA5Mjc3NTYwOX0.lTGzd69csS0BiMbjYDCDVqB4ANcCWrzgZKdSHgBDFuc';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+// ===== SOUND SYSTEM =====
+const SOUND_KEY = 'forge_sound_enabled';
+let soundEnabled = localStorage.getItem(SOUND_KEY) !== 'false';
+let audioCtx = null;
+function getAudioContext() {
+  if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e){return null;} }
+  return audioCtx;
+}
+function playSound(type) {
+  if (!soundEnabled) return;
+  const ctx = getAudioContext(); if (!ctx) return;
+  if (ctx.state === 'suspended') { ctx.resume().then(() => actuallyPlay(ctx, type)); return; }
+  actuallyPlay(ctx, type);
+}
+function actuallyPlay(ctx, type) {
+  const now = ctx.currentTime;
+  let f1, f2, dur, gain;
+  switch (type) {
+    case 'tap': f1=600;f2=800;dur=0.05;gain=0.10;break;
+    case 'success': f1=700;f2=1200;dur=0.18;gain=0.14;break;
+    case 'error': f1=400;f2=200;dur=0.20;gain=0.12;break;
+    case 'open': f1=800;f2=1100;dur=0.10;gain=0.10;break;
+    default: f1=700;f2=800;dur=0.05;gain=0.08;
+  }
+  try {
+    const osc = ctx.createOscillator(); const g = ctx.createGain();
+    osc.type = 'sine'; osc.frequency.setValueAtTime(f1, now);
+    osc.frequency.exponentialRampToValueAtTime(f2, now + dur);
+    g.gain.setValueAtTime(gain, now); g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.connect(g); g.connect(ctx.destination); osc.start(now); osc.stop(now + dur);
+  } catch(e){}
+}
+function toggleSound() {
+  soundEnabled = !soundEnabled;
+  localStorage.setItem(SOUND_KEY, soundEnabled);
+  updateSoundButton();
+  if (soundEnabled) playSound('tap');
+}
+function updateSoundButton() {
+  const btn = document.getElementById('soundToggle');
+  if (btn) btn.textContent = soundEnabled ? '🔊' : '🔇';
+}
+// Pre-warm audio on first touch
+document.addEventListener('touchstart', function pw() {
+  const ctx = getAudioContext();
+  if (ctx && ctx.state === 'suspended') ctx.resume();
+  document.removeEventListener('touchstart', pw);
+}, { once: true, passive: true });
+document.addEventListener('click', function pwc() {
+  const ctx = getAudioContext();
+  if (ctx && ctx.state === 'suspended') ctx.resume();
+  document.removeEventListener('click', pwc);
+}, { once: true });
+
+// Global button tap sound
+document.addEventListener('click', function(e) {
+  if (!soundEnabled) return;
+  const btn = e.target.closest('button, .nav-action-btn, .lbtn, .ptab, .video-card, .sound-toggle, a.nav-action-btn');
+  if (btn) playSound('tap');
+}, true);
+
+// ===== JOIN POPUP =====
+let joinPendingEmail = '';
+let joinOtpTimer = null;
+let joinOtpEndTime = 0;
+
+function openJoinPopup() {
+  document.getElementById('joinPopup').classList.add('show');
+  document.body.style.overflow = 'hidden';
+  document.getElementById('joinStepRegister').style.display = 'block';
+  document.getElementById('joinStepOTP').style.display = 'none';
+  document.getElementById('joinEmail').value = '';
+  document.getElementById('joinMsg').textContent = '';
+  document.getElementById('joinStatus').textContent = '';
+  playSound('open');
+}
+
+function closeJoinPopup() {
+  document.getElementById('joinPopup').classList.remove('show');
+  document.body.style.overflow = '';
+  if (joinOtpTimer) clearInterval(joinOtpTimer);
+  playSound('tap');
+}
+
+function checkEmailFormat(email) {
+  if (!email) return { ok:false, msg:'' };
+  const re = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  if (!re.test(email)) return { ok:false, msg:'⚠️ Invalid email format' };
+  const dispose = ['mailinator','guerrillamail','10minutemail','tempmail','throwaway','yopmail','trashmail'];
+  if (dispose.some(d => email.includes(d))) return { ok:false, msg:'❌ Disposable email not allowed' };
+  return { ok:true, msg:'✓ Email looks good' };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const reg = document.getElementById('joinEmail');
+  if (reg) {
+    reg.addEventListener('input', () => {
+      const status = document.getElementById('joinStatus');
+      const v = reg.value.trim().toLowerCase();
+      if (!v) { status.textContent = ''; reg.style.borderColor = 'rgba(255,255,255,.15)'; return; }
+      const r = checkEmailFormat(v);
+      status.textContent = r.msg;
+      status.style.color = r.ok ? '#00C853' : '#FFB300';
+      reg.style.borderColor = r.ok ? '#00C853' : (v.length > 3 ? '#ff4444' : 'rgba(255,255,255,.15)');
+    });
+  }
+});
+
+async function processReferralReward(refCode, newUserEmail) {
+  if (!refCode || !newUserEmail) return;
+  try {
+    const { data: referrer } = await sb.from('waitlist').select('email, virtual_pkc_balance, total_referrals').eq('affiliate_code', refCode).maybeSingle();
+    if (!referrer) return;
+    const currentReferrals = (referrer.total_referrals || 0) + 1;
+    let mult = 1.0, tier = 'standard';
+    if (currentReferrals >= 300) { mult = 1.15; tier = 'tier3_15%'; }
+    else if (currentReferrals >= 200) { mult = 1.10; tier = 'tier2_10%'; }
+    else if (currentReferrals >= 100) { mult = 1.05; tier = 'tier1_5%'; }
+    const reward = Math.round(10 * mult);
+    const newBal = (referrer.virtual_pkc_balance || 0) + reward;
+    await sb.from('waitlist').update({ virtual_pkc_balance: newBal, total_referrals: currentReferrals }).eq('email', referrer.email);
+    await sb.from('pkc_transactions').insert([{ user_email: referrer.email, amount: reward, type: 'credit', source: 'referral_reward', status: 'completed', notes: `Referral #${currentReferrals} from ${newUserEmail} (${tier})` }]);
+  } catch(e) { console.warn('Referral failed:', e); }
+}
+
+async function doJoinRegister() {
+  const email = document.getElementById('joinEmail').value.trim().toLowerCase();
+  const msg = document.getElementById('joinMsg');
+  const btn = document.getElementById('joinBtn');
+  const r = checkEmailFormat(email);
+  if (!r.ok) { msg.style.color = '#ff4444'; msg.textContent = r.msg; playSound('error'); return; }
+  btn.disabled = true; btn.textContent = '⏳ REGISTERING...';
+  msg.style.color = '#FFB300'; msg.textContent = 'Creating account...';
+  try {
+    const ref = new URLSearchParams(window.location.search).get('ref') || '';
+    const affCode = 'FA-' + Math.random().toString(36).substring(2,8).toUpperCase();
+    const { error: insErr } = await sb.from('waitlist').insert([{
+      email, affiliate_code: affCode, language: lang || 'en',
+      source: 'nav_join_button', referred_by: ref || null
+    }]);
+    if (insErr && insErr.code !== '23505') throw new Error(insErr.message);
+    if (!insErr && ref) { await processReferralReward(ref, email); }
+    const code = String(Math.floor(100000 + Math.random() * 900000));
+    const exp = new Date(Date.now() + 180000).toISOString();
+    await sb.from('otp_codes').insert([{ email, code, purpose:'login', expires_at: exp }]);
+    joinPendingEmail = email;
+    localStorage.setItem('forge_dash_email', email);
+    msg.style.color = '#00C853'; msg.textContent = '✅ Registered!';
+    playSound('success');
+    setTimeout(() => {
+      document.getElementById('joinStepRegister').style.display = 'none';
+      document.getElementById('joinStepOTP').style.display = 'block';
+      document.getElementById('joinOtpEmailLabel').textContent = email;
+      document.getElementById('joinOtpCode').value = '';
+      document.getElementById('joinOtpMsg').textContent = '';
+      document.getElementById('joinOtpCodeDisplay').textContent = code;
+      document.getElementById('joinOtpDisplay').style.display = 'block';
+      startJoinOtpTimer(180);
+      document.getElementById('joinOtpCode').oninput = function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+        if (this.value.length === 6) doJoinVerify();
+      };
+    }, 600);
+  } catch(err) {
+    msg.style.color = '#ff4444'; msg.textContent = '❌ ' + err.message;
+    playSound('error');
+    btn.disabled = false; btn.textContent = 'RESERVE & GET CODE';
+  }
+}
+
+function startJoinOtpTimer(seconds) {
+  joinOtpEndTime = Date.now() + seconds * 1000;
+  if (joinOtpTimer) clearInterval(joinOtpTimer);
+  joinOtpTimer = setInterval(() => {
+    const r = Math.max(0, Math.floor((joinOtpEndTime - Date.now()) / 1000));
+    const m = Math.floor(r / 60), s = r % 60;
+    document.getElementById('joinOtpTimer').textContent = `Code expires in: ${m}:${String(s).padStart(2,'0')}`;
+    if (r <= 0) {
+      clearInterval(joinOtpTimer);
+      document.getElementById('joinOtpTimer').textContent = 'Code expired';
+      document.getElementById('joinOtpTimer').style.color = '#ff4444';
+    }
+  }, 1000);
+}
+
+async function doJoinVerify() {
+  const code = document.getElementById('joinOtpCode').value.trim();
+  const msg = document.getElementById('joinOtpMsg');
+  if (!/^\d{6}$/.test(code)) { msg.style.color = '#ff4444'; msg.textContent = '⚠️ Enter 6-digit code'; return; }
+  msg.style.color = '#FFB300'; msg.textContent = '⏳ Verifying...';
+  try {
+    const now = new Date().toISOString();
+    const { data: otp } = await sb.from('otp_codes').select('*')
+      .eq('email', joinPendingEmail).eq('code', code).eq('used', false)
+      .gt('expires_at', now).order('created_at', {ascending:false}).limit(1).single();
+    if (!otp) { msg.style.color = '#ff4444'; msg.textContent = '❌ Invalid or expired code'; playSound('error'); return; }
+    await sb.from('otp_codes').update({used:true}).eq('id', otp.id);
+    let rec = JSON.parse(localStorage.getItem('forge_recent_emails') || '[]');
+    rec = [joinPendingEmail, ...rec.filter(e => e !== joinPendingEmail)].slice(0, 3);
+    localStorage.setItem('forge_recent_emails', JSON.stringify(rec));
+    localStorage.setItem('forge_dash_email', joinPendingEmail);
+    localStorage.setItem('forge_session_token', btoa(joinPendingEmail + ':' + Date.now()));
+    // Welcome Bonus
+    let bonus = false;
+    try {
+      const { data: u } = await sb.from('waitlist').select('virtual_pkc_balance, welcome_bonus_received').eq('email', joinPendingEmail).maybeSingle();
+      if (u && !u.welcome_bonus_received) {
+        const newBal = (u.virtual_pkc_balance || 0) + 100;
+        const { error } = await sb.from('waitlist').update({ virtual_pkc_balance: newBal, welcome_bonus_received: true }).eq('email', joinPendingEmail).eq('welcome_bonus_received', false);
+        if (!error) {
+          await sb.from('pkc_transactions').insert([{ user_email: joinPendingEmail, amount: 100, type: 'credit', source: 'welcome_bonus', status: 'completed', notes: 'Welcome Bonus' }]);
+          bonus = true;
+        }
+      }
+    } catch(e){}
+    if (bonus) { localStorage.setItem('forge_show_welcome_bonus', '100'); msg.style.color = '#00C853'; msg.innerHTML = '🎉 +100 PKC Welcome Bonus!'; }
+    else { msg.style.color = '#00C853'; msg.textContent = '✅ Verified!'; }
+    if (joinOtpTimer) clearInterval(joinOtpTimer);
+    playSound('success');
+    setTimeout(() => {
+      const token = btoa(joinPendingEmail + ':' + Date.now());
+      const params = new URLSearchParams();
+      params.set('e', joinPendingEmail);
+      params.set('t', token);
+      if (bonus) params.set('b', '100');
+      window.location.href = '/dashboard.html?' + params.toString();
+    }, bonus ? 1500 : 600);
+  } catch(err) { msg.style.color = '#ff4444'; msg.textContent = '❌ ' + err.message; playSound('error'); }
+}
+
+// ===== i18n =====
+const T = {
+  en:{ eyebrow:'Global Esports Platform', heroDesc:'The <strong>first platform</strong> built for tournament organizers worldwide. Any game. Any scale.', stat1:'Online Now',stat2:'New Today',stat3:'Members',stat4:'Live', prizeLabel:'⚡ VIP PRIZE POOL', ptabYearly:'Yearly',ptabHalf:'6 Months',ptabQuarter:'3 Months',ptabMonth:'1 Month', videoLabel:'Best Matches',videoTitle:'Top Highlights', lbLabel:'Rankings',lbTitle:'Global Leaderboard',lbHeader:'Top Organizers — April 2026' },
+  th:{ eyebrow:'แพลตฟอร์ม Esports ระดับโลก', heroDesc:'<strong>แพลตฟอร์มแรก</strong> สำหรับผู้จัดการแข่งขันทั่วโลก ทุกเกม ทุกขนาด', stat1:'ออนไลน์ตอนนี้',stat2:'สมัครวันนี้',stat3:'สมาชิก',stat4:'แข่งอยู่', prizeLabel:'⚡ รางวัลสะสม VIP', ptabYearly:'รายปี',ptabHalf:'6 เดือน',ptabQuarter:'3 เดือน',ptabMonth:'1 เดือน', videoLabel:'ไฮไลท์ดีที่สุด',videoTitle:'คู่แข่งขันยอดเยี่ยม', lbLabel:'อันดับ',lbTitle:'ลีดเดอร์บอร์ดโลก',lbHeader:'ผู้จัดยอดเยี่ยม เม.ย. 2026' }
+};
+let lang = 'en';
+function setLang(l) {
+  lang = l;
+  const t = Object.assign({}, T.en, T[l] || {});
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const k = el.getAttribute('data-i18n');
+    if (t[k] !== undefined) el.innerHTML = t[k];
+  });
+  document.querySelectorAll('.lbtn').forEach(b => b.classList.remove('on'));
+  const ab = document.getElementById('btn-' + l);
+  if (ab) ab.classList.add('on');
+  document.documentElement.lang = l;
+  document.body.style.direction = l === 'ar' ? 'rtl' : 'ltr';
+}
+
+// ===== STATS / PRIZE =====
+let online = 1247, newToday = 384, total = 12847, tournaments = 23;
+let prizePools = { yearly:428400, half:180600, quarter:92800, month:24500 };
+let currentPeriod = 'yearly';
+function fmtNum(n) { return n.toLocaleString(); }
+function switchPrize(period, btn) {
+  currentPeriod = period;
+  document.querySelectorAll('.ptab').forEach(t => t.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  document.getElementById('prizeAmount').textContent = fmtNum(prizePools[period]);
+}
+function updateStats() {
+  online += Math.floor(Math.random()*6)-2;
+  if (online < 1100) online = 1100;
+  if (Math.random() > 0.7) { newToday++; total++; }
+  prizePools[currentPeriod] += Math.floor(Math.random()*30)+5;
+  document.getElementById('statOnline').innerHTML = fmtNum(online)+'<span class="stat-blink"></span>';
+  document.getElementById('statNew').textContent = '+'+fmtNum(newToday);
+  document.getElementById('statTotal').textContent = fmtNum(total);
+  document.getElementById('statTournament').textContent = tournaments;
+  document.getElementById('prizeAmount').textContent = fmtNum(prizePools[currentPeriod]);
+}
+setInterval(updateStats, 2800);
+
+// ===== CANVAS THUMBS =====
+function drawThumb(id, c1, c2) {
+  const c = document.getElementById(id);
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  let t = 0;
+  function draw() {
+    ctx.fillStyle='#080810';ctx.fillRect(0,0,w,h);
+    ctx.strokeStyle='rgba(255,61,0,0.08)';ctx.lineWidth=1;
+    for(let x=0;x<w;x+=24){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}
+    for(let y=0;y<h;y+=24){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}
+    for(let i=0;i<4;i++){
+      const y=h-36+(i%2)*16;const maxW=w-40;
+      const bw=(Math.sin(t*0.05+i*1.2)+1)/2*maxW;
+      const g=ctx.createLinearGradient(20,0,20+bw,0);g.addColorStop(0,c1);g.addColorStop(1,c2);
+      ctx.fillStyle='rgba(0,0,0,0.4)';ctx.fillRect(20,y,maxW,5);
+      ctx.fillStyle=g;ctx.fillRect(20,y,bw,5);
+    }
+    t++;requestAnimationFrame(draw);
+  }
+  draw();
+}
+drawThumb('vc1','#FF3D00','#FFB300');
+drawThumb('vc2','#FFB300','#FF6600');
+drawThumb('vc3','#9C27B0','#FF3D00');
+function playVideo(n){ alert('Opening highlight #' + n); }
+
+// ===== LEADERBOARD =====
+const lbData=[
+  {rank:1,name:'ShadowKnight_TH',country:'🇹🇭',score:'4,820',init:'S'},
+  {rank:2,name:'DragonClan_VN',country:'🇻🇳',score:'4,610',init:'D'},
+  {rank:3,name:'StormRaider_ID',country:'🇮🇩',score:'4,405',init:'S'},
+  {rank:4,name:'PhoenixClash_JP',country:'🇯🇵',score:'4,190',init:'P'},
+  {rank:5,name:'IronForge_KR',country:'🇰🇷',score:'3,980',init:'I'}
+];
+function renderLB(){
+  document.getElementById('lbBody').innerHTML=lbData.map(r=>`
+    <div class="lb-row">
+      <div class="lb-rank ${r.rank<=3?'top':''}">${r.rank<=3?['🥇','🥈','🥉'][r.rank-1]:r.rank}</div>
+      <div class="lb-avatar">${r.init}</div>
+      <div class="lb-name">${r.name}</div>
+      <div class="lb-country">${r.country}</div>
+      <div class="lb-score">${r.score}</div>
+    </div>`).join('');
+}
+renderLB();
+
+setLang('en');
+updateSoundButton();
+
+// ❌ NO AUTO-POPUP - Popup opens only via JOIN button click
+</script>
+
+</body>
+</html>
