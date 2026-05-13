@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Dashboard · ForgeArena</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;700;900&family=Barlow+Condensed:wght@600;700;900&family=Barlow:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{background:#060608;color:#fff;font-family:'Barlow',sans-serif;min-height:100vh;-webkit-font-smoothing:antialiased;}
+button,input{font-family:inherit;}
+
+nav{position:fixed;top:0;left:0;right:0;height:64px;display:flex;align-items:center;padding:0 20px;background:rgba(6,6,8,0.96);border-bottom:1px solid rgba(255,255,255,.1);z-index:100;gap:12px;}
+.logo{font-family:‘Rajdhani’,sans-serif;font-weight:900;flex:1;display:flex;flex-direction:column;gap:3px;line-height:1;text-transform:uppercase;}
+.logo-top{font-size:22px;letter-spacing:3px;color:#fff;}
+.logo em{font-style:normal;font-size:18px;letter-spacing:6px;color:#FFD700;}
+.nav-back{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#fff;padding:8px 14px;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:2px;text-transform:uppercase;text-decoration:none;border-radius:4px;}
+
+.container{max-width:680px;margin:0 auto;padding:84px 16px 60px;}
+
+.dash-hero{text-align:center;padding:24px 16px;margin-bottom:20px;}
+.dash-pretitle{font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:4px;color:#FF6600;font-weight:700;text-transform:uppercase;margin-bottom:8px;}
+.dash-title{font-family:‘Rajdhani’,sans-serif;font-weight:900;font-size:32px;letter-spacing:1px;text-transform:uppercase;color:#fff;line-height:1;margin-bottom:6px;}
+.dash-sub{font-size:13px;color:#888;}
+
+.login-box{background:linear-gradient(180deg,#0d0d0e,#161618);border:1px solid rgba(255,102,0,.25);border-top:3px solid #FF6600;padding:32px 24px;margin-bottom:20px;border-radius:8px;}
+.login-icon{font-size:48px;text-align:center;margin-bottom:16px;}
+.login-title{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:20px;letter-spacing:2px;text-transform:uppercase;color:#fff;text-align:center;margin-bottom:6px;}
+.login-sub{text-align:center;color:#888;font-size:13px;margin-bottom:20px;line-height:1.5;}
+.login-form{display:flex;gap:8px;}
+.login-input{flex:1;padding:14px 16px;background:#000;color:#fff;border:2px solid rgba(255,255,255,.12);font-size:14px;outline:none;border-radius:4px;}
+.login-input:focus{border-color:#FF6600;}
+.login-submit{padding:14px 18px;background:linear-gradient(100deg,#FF6600,#ff5500);color:#fff;border:none;font-family:‘Rajdhani’,sans-serif;font-weight:900;font-size:13px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:4px;}
+.login-submit:active{transform:scale(.96);}
+.login-msg{text-align:center;font-size:13px;margin-top:16px;min-height:18px;}
+.login-msg.success{color:#00C853;}
+.login-msg.error{color:#ff4444;}
+.login-msg.info{color:#FFB300;}
+.login-help{text-align:center;font-size:11px;color:#666;margin-top:14px;}
+.login-help a{color:#FFB300;text-decoration:none;}
+
+#dashContent{display:none;}
+
+.user-greeting{background:rgba(0,200,83,.08);border:1px solid rgba(0,200,83,.3);padding:16px 18px;margin-bottom:18px;display:flex;align-items:center;gap:14px;border-radius:4px;}
+.greeting-avatar{width:48px;height:48px;background:linear-gradient(135deg,#FF6600,#FFB300);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:22px;}
+.greeting-text{flex:1;}
+.greeting-hi{font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:2px;color:#888;text-transform:uppercase;}
+.greeting-email{font-size:14px;font-weight:600;color:#fff;word-break:break-all;}
+.logout-btn{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.1);color:#aaa;padding:8px 12px;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:1.5px;cursor:pointer;border-radius:4px;}
+
+.token-card{background:linear-gradient(135deg,#1a1208,#0d0d0e);border:1px solid rgba(255,215,0,.3);border-top:3px solid #FFD700;padding:24px 20px;margin-bottom:18px;text-align:center;border-radius:8px;}
+.token-label{font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:3px;color:#888;text-transform:uppercase;margin-bottom:6px;}
+.token-amount{font-family:‘Rajdhani’,sans-serif;font-weight:900;font-size:48px;color:#FFD700;line-height:1;}
+.token-symbol{font-size:22px;color:#FF6600;font-weight:700;margin-left:6px;}
+.token-status{margin-top:12px;font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:2px;color:#FFB300;padding:4px 10px;background:rgba(255,179,0,.1);border:1px solid rgba(255,179,0,.3);display:inline-block;border-radius:4px;}
+
+.daily-card{background:linear-gradient(180deg,#0d1208,#0d0d0e);border:1px solid rgba(0,200,83,.25);padding:18px;margin-bottom:18px;text-align:center;border-radius:8px;}
+.daily-icon{font-size:32px;margin-bottom:8px;}
+.daily-title{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:16px;letter-spacing:2px;color:#fff;text-transform:uppercase;margin-bottom:4px;}
+.daily-desc{font-size:12px;color:#888;margin-bottom:14px;}
+.daily-btn{width:100%;padding:14px;background:linear-gradient(100deg,#00C853,#00A040);color:#000;border:none;font-family:‘Rajdhani’,sans-serif;font-weight:900;font-size:14px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border-radius:4px;}
+.daily-btn:disabled{background:#222;color:#666;cursor:not-allowed;opacity:.6;}
+.daily-timer{margin-top:10px;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;color:#FFB300;}
+
+.sec-title{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:14px;letter-spacing:3px;text-transform:uppercase;color:#FF6600;margin:24px 0 12px;}
+
+.aff-card{background:rgba(255,215,0,.05);border:1px solid rgba(255,215,0,.2);padding:18px;margin-bottom:14px;border-radius:8px;}
+.aff-code-label{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:2px;color:#888;text-transform:uppercase;margin-bottom:2px;}
+.aff-code-val{font-family:‘Rajdhani’,sans-serif;font-weight:700;font-size:18px;color:#FFD700;letter-spacing:2px;margin-bottom:14px;}
+.aff-link-row{display:flex;gap:6px;margin-bottom:12px;}
+.aff-link-input{flex:1;padding:10px;background:#000;color:#FFD700;border:1px solid rgba(255,215,0,.3);font-family:monospace;font-size:11px;outline:none;border-radius:4px;}
+.aff-copy-btn{padding:10px 14px;background:#FFD700;color:#000;border:none;font-weight:900;font-size:11px;cursor:pointer;border-radius:4px;}
+.aff-share{display:flex;flex-wrap:wrap;gap:6px;}
+.aff-share-btn{flex:1;min-width:calc(50% - 6px);padding:10px;text-align:center;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);color:#fff;text-decoration:none;font-family:‘Barlow Condensed’,sans-serif;font-size:11px;letter-spacing:1px;text-transform:uppercase;border-radius:4px;}
+
+.stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:18px;}
+.stat-box{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.1);padding:14px;border-radius:4px;}
+.stat-num{font-family:‘Rajdhani’,sans-serif;font-weight:900;font-size:24px;color:#fff;line-height:1;}
+.stat-num.green{color:#00C853;}
+.stat-num.gold{color:#FFD700;}
+.stat-num.fire{color:#FF6600;}
+.stat-lbl{font-family:‘Barlow Condensed’,sans-serif;font-size:10px;letter-spacing:2px;color:#888;margin-top:4px;text-transform:uppercase;}
+</style>
+
+</head>
+<body>
+
+<nav>
+  <div class="logo"><span class="logo-top">FORGE</span><em>ARENA</em></div>
+  <a href="/" class="nav-back">← HOME</a>
+</nav>
+
+<div class="container">
+
+  <!-- LOGIN -->
+
+  <div id="loginSection">
+    <div class="dash-hero">
+      <div class="dash-pretitle">Member Dashboard</div>
+      <h1 class="dash-title">Sign In</h1>
+      <div class="dash-sub">Enter your email to access your dashboard</div>
+    </div>
+
+```
+<div class="login-box">
+  <div class="login-icon">🔐</div>
+  <div class="login-title">Welcome Back</div>
+  <div class="login-sub">Enter your registered email</div>
+  <div class="login-form">
+    <input type="email" id="loginEmail" class="login-input" placeholder="your@email.com">
+    <button class="login-submit" id="signInBtn" type="button">SIGN IN</button>
+  </div>
+  <div id="loginMsg" class="login-msg"></div>
+  <div class="login-help">
+    Not registered yet? <a href="/">Join the Waitlist</a>
+  </div>
+</div>
+```
+
+  </div>
+
+  <!-- DASHBOARD -->
+
+  <div id="dashContent">
+    <div class="user-greeting">
+      <div class="greeting-avatar" id="userAvatar">👤</div>
+      <div class="greeting-text">
+        <div class="greeting-hi">Welcome Back</div>
+        <div class="greeting-email" id="userEmail"></div>
+      </div>
+      <button class="logout-btn" id="logoutBtn" type="button">SIGN OUT</button>
+    </div>
+
+```
+<div class="token-card">
+  <div class="token-label">Your PKC Balance</div>
+  <div>
+    <span class="token-amount" id="pkcBalance">0</span>
+    <span class="token-symbol">PKC</span>
+  </div>
+  <div class="token-status">⏳ Virtual · Pre-Launch Mode</div>
+</div>
+
+<div class="daily-card">
+  <div class="daily-icon">🎁</div>
+  <div class="daily-title">Daily Login Reward</div>
+  <div class="daily-desc">Claim 1 PKC every 24 hours</div>
+  <button class="daily-btn" id="dailyBtn" type="button">CLAIM 1 PKC</button>
+  <div class="daily-timer" id="dailyTimer"></div>
+</div>
+
+<div class="sec-title">Your Affiliate</div>
+<div class="aff-card">
+  <div class="aff-code-label">Affiliate Code</div>
+  <div class="aff-code-val" id="affCode">FA-XXXXXX</div>
+  <div class="aff-link-row">
+    <input type="text" id="affLink" readonly class="aff-link-input">
+    <button class="aff-copy-btn" id="copyBtn" type="button">COPY</button>
+  </div>
+  <div class="aff-share">
+    <a href="#" data-share="whatsapp" class="aff-share-btn">📱 WhatsApp</a>
+    <a href="#" data-share="line" class="aff-share-btn">💬 LINE</a>
+    <a href="#" data-share="telegram" class="aff-share-btn">✈️ Telegram</a>
+    <a href="#" data-share="twitter" class="aff-share-btn">🐦 X/Twitter</a>
+  </div>
+</div>
+
+<div class="sec-title">Your Stats</div>
+<div class="stats-grid">
+  <div class="stat-box"><div class="stat-num green" id="statReferrals">0</div><div class="stat-lbl">Referrals</div></div>
+  <div class="stat-box"><div class="stat-num gold" id="statEarned">0</div><div class="stat-lbl">PKC Earned</div></div>
+  <div class="stat-box"><div class="stat-num fire" id="statLogins">0</div><div class="stat-lbl">Login Streak</div></div>
+  <div class="stat-box"><div class="stat-num" id="statBonus">0%</div><div class="stat-lbl">Bonus Tier</div></div>
+</div>
+```
+
+  </div>
+
+</div>
+
+<!-- LOAD SUPABASE FIRST -->
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- MAIN SCRIPT - ATTACH EVENTS AFTER DOM LOAD -->
+
+<script>
+console.log('[Dashboard] Script start');
+
+const SUPABASE_URL = 'https://dfbrqporbfiaaejeofmr.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRmYnJxcG9yYmZpYWFlamVvZm1yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzcxOTk2MDksImV4cCI6MjA5Mjc3NTYwOX0.lTGzd69csS0BiMbjYDCDVqB4ANcCWrzgZKdSHgBDFuc';
+
+let sb = null;
+let currentUser = null;
+
+function initSupabase() {
+  if (typeof supabase === 'undefined') {
+    console.error('[Dashboard] Supabase library not loaded!');
+    return false;
+  }
+  sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  console.log('[Dashboard] Supabase initialized');
+  return true;
+}
+
+function formatNumber(n) {
+  if (n === null || n === undefined) return '0';
+  return Number(n).toLocaleString();
+}
+
+async function signIn() {
+  console.log('[Dashboard] signIn() called');
+  const emailEl = document.getElementById('loginEmail');
+  const msg = document.getElementById('loginMsg');
+  const btn = document.getElementById('signInBtn');
+
+  if (!emailEl) { console.error('loginEmail not found'); return; }
+
+  const email = emailEl.value.trim().toLowerCase();
+  console.log('[Dashboard] Email:', email);
+
+  if (!email || !email.includes('@')) {
+    msg.className = 'login-msg error';
+    msg.textContent = '⚠️ Please enter a valid email';
+    return;
+  }
+
+  if (!sb) {
+    msg.className = 'login-msg error';
+    msg.textContent = '❌ Database not ready. Please refresh.';
+    return;
+  }
+
+  btn.disabled = true;
+  btn.textContent = 'SIGNING IN...';
+  msg.className = 'login-msg info';
+  msg.textContent = '⏳ Verifying...';
+
+  try {
+    console.log('[Dashboard] Querying waitlist...');
+    const { data: user, error: dbErr } = await sb
+      .from('waitlist')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    console.log('[Dashboard] Query result:', { user, dbErr });
+
+    if (dbErr) {
+      msg.className = 'login-msg error';
+      msg.textContent = '❌ DB Error: ' + dbErr.message;
+      btn.disabled = false;
+      btn.textContent = 'SIGN IN';
+      return;
+    }
+
+    if (!user) {
+      msg.className = 'login-msg error';
+      msg.textContent = '❌ Email not found. Please join the waitlist first.';
+      btn.disabled = false;
+      btn.textContent = 'SIGN IN';
+      return;
+    }
+
+    currentUser = user;
+    localStorage.setItem('forge_dash_email', email);
+    localStorage.setItem('forge_session_token', btoa(email + ':' + Date.now()));
+
+    msg.className = 'login-msg success';
+    msg.textContent = '✅ Signed in!';
+
+    setTimeout(showDashboard, 400);
+
+  } catch (err) {
+    console.error('[Dashboard] signIn error:', err);
+    msg.className = 'login-msg error';
+    msg.textContent = '❌ Error: ' + err.message;
+    btn.disabled = false;
+    btn.textContent = 'SIGN IN';
+  }
+}
+
+function showDashboard() {
+  console.log('[Dashboard] showDashboard()');
+  document.getElementById('loginSection').style.display = 'none';
+  document.getElementById('dashContent').style.display = 'block';
+  loadUserData();
+}
+
+async function loadUserData() {
+  if (!currentUser) return;
+  document.getElementById('userAvatar').textContent = currentUser.email.charAt(0).toUpperCase();
+  document.getElementById('userEmail').textContent = currentUser.email;
+  document.getElementById('affCode').textContent = currentUser.affiliate_code || 'FA-NEW';
+  document.getElementById('affLink').value = `https://forgearena.net/?ref=${currentUser.affiliate_code || ''}`;
+  document.getElementById('pkcBalance').textContent = formatNumber(currentUser.virtual_pkc_balance || 0);
+  document.getElementById('statReferrals').textContent = currentUser.total_referrals || 0;
+  document.getElementById('statLogins').textContent = currentUser.total_logins || 0;
+  const refs = currentUser.total_referrals || 0;
+  let bonus = 0;
+  if (refs >= 300) bonus = 15;
+  else if (refs >= 200) bonus = 10;
+  else if (refs >= 100) bonus = 5;
+  document.getElementById('statBonus').textContent = '+' + bonus + '%';
+
+  // Earned
+  try {
+    const { data } = await sb.from('pkc_transactions').select('amount').eq('user_email', currentUser.email);
+    if (data) {
+      const total = data.reduce((s, x) => s + (x.amount || 0), 0);
+      document.getElementById('statEarned').textContent = formatNumber(total);
+    }
+  } catch(e){}
+
+  updateDailyButton();
+}
+
+function getNextRewardTime() {
+  if (!currentUser.last_daily_reward_at) return 0;
+  return new Date(currentUser.last_daily_reward_at).getTime() + (24*60*60*1000) - Date.now();
+}
+
+function updateDailyButton() {
+  const btn = document.getElementById('dailyBtn');
+  const timer = document.getElementById('dailyTimer');
+  const remaining = getNextRewardTime();
+  if (remaining <= 0) {
+    btn.disabled = false;
+    btn.textContent = 'CLAIM 1 PKC';
+    timer.textContent = '✓ Available now';
+    timer.style.color = '#00C853';
+  } else {
+    btn.disabled = true;
+    const h = Math.floor(remaining / 3600000);
+    const m = Math.floor((remaining % 3600000) / 60000);
+    btn.textContent = '⏳ ALREADY CLAIMED';
+    timer.textContent = `Next reward in: ${h}h ${m}m`;
+    timer.style.color = '#FFB300';
+  }
+}
+
+async function claimDaily() {
+  if (getNextRewardTime() > 0) return;
+  const btn = document.getElementById('dailyBtn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Claiming...';
+  try {
+    const newBalance = (currentUser.virtual_pkc_balance || 0) + 1;
+    const newLogins = (currentUser.total_logins || 0) + 1;
+    const now = new Date().toISOString();
+    await sb.from('waitlist').update({
+      virtual_pkc_balance: newBalance,
+      last_daily_reward_at: now,
+      last_login_at: now,
+      total_logins: newLogins
+    }).eq('email', currentUser.email);
+    await sb.from('pkc_transactions').insert([{
+      user_email: currentUser.email,
+      amount: 1,
+      type: 'login',
+      source: 'daily_login',
+      status: 'pending'
+    }]);
+    currentUser.virtual_pkc_balance = newBalance;
+    currentUser.last_daily_reward_at = now;
+    currentUser.total_logins = newLogins;
+    document.getElementById('pkcBalance').textContent = formatNumber(newBalance);
+    document.getElementById('statLogins').textContent = newLogins;
+    updateDailyButton();
+  } catch(err) {
+    btn.disabled = false;
+    btn.textContent = 'CLAIM 1 PKC';
+    alert('Error: ' + err.message);
+  }
+}
+
+function doLogout() {
+  localStorage.removeItem('forge_dash_email');
+  localStorage.removeItem('forge_session_token');
+  currentUser = null;
+  document.getElementById('dashContent').style.display = 'none';
+  document.getElementById('loginSection').style.display = 'block';
+  document.getElementById('loginEmail').value = '';
+  document.getElementById('loginMsg').textContent = '';
+}
+
+function copyAffLink() {
+  const input = document.getElementById('affLink');
+  input.select();
+  try {
+    navigator.clipboard.writeText(input.value).then(() => {
+      const btn = document.getElementById('copyBtn');
+      const orig = btn.textContent;
+      btn.textContent = '✓ COPIED';
+      btn.style.background = '#00C853';
+      setTimeout(() => { btn.textContent = orig; btn.style.background = '#FFD700'; }, 1500);
+    });
+  } catch(e) { document.execCommand('copy'); }
+}
+
+function shareAff(platform) {
+  const link = document.getElementById('affLink').value;
+  const text = '🏆 Join me on ForgeArena - Global Esports Platform! 🔥';
+  let url = '';
+  if (platform === 'whatsapp') url = `https://wa.me/?text=${encodeURIComponent(text + ' ' + link)}`;
+  else if (platform === 'line') url = `https://line.me/R/msg/text/?${encodeURIComponent(text + ' ' + link)}`;
+  else if (platform === 'telegram') url = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent(text)}`;
+  else if (platform === 'twitter') url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(link)}`;
+  if (url) window.open(url, '_blank');
+}
+
+// ===== ATTACH ALL EVENT LISTENERS AFTER DOM READY =====
+function attachListeners() {
+  console.log('[Dashboard] Attaching event listeners...');
+
+  // SIGN IN BUTTON
+  const signInBtn = document.getElementById('signInBtn');
+  if (signInBtn) {
+    signInBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      console.log('[Dashboard] SIGN IN clicked');
+      signIn();
+    });
+    console.log('[Dashboard] ✓ signIn listener attached');
+  } else {
+    console.error('[Dashboard] ✗ signInBtn not found');
+  }
+
+  // ENTER KEY in email field
+  const emailInput = document.getElementById('loginEmail');
+  if (emailInput) {
+    emailInput.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        signIn();
+      }
+    });
+  }
+
+  // LOGOUT
+  const logoutBtn = document.getElementById('logoutBtn');
+  if (logoutBtn) logoutBtn.addEventListener('click', doLogout);
+
+  // DAILY
+  const dailyBtn = document.getElementById('dailyBtn');
+  if (dailyBtn) dailyBtn.addEventListener('click', claimDaily);
+
+  // COPY
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) copyBtn.addEventListener('click', copyAffLink);
+
+  // SHARE BUTTONS
+  document.querySelectorAll('[data-share]').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      shareAff(this.getAttribute('data-share'));
+    });
+  });
+
+  // Auto-update timer every second
+  setInterval(() => { if (currentUser) updateDailyButton(); }, 1000);
+}
+
+// ===== AUTO LOGIN =====
+async function tryAutoLogin() {
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlEmail = urlParams.get('e');
+  const urlToken = urlParams.get('t');
+
+  let savedEmail = localStorage.getItem('forge_dash_email');
+
+  if (urlEmail && urlToken) {
+    savedEmail = urlEmail.toLowerCase();
+    localStorage.setItem('forge_dash_email', savedEmail);
+    localStorage.setItem('forge_session_token', urlToken);
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
+  if (savedEmail && sb) {
+    try {
+      const { data } = await sb.from('waitlist').select('*').eq('email', savedEmail).maybeSingle();
+      if (data) {
+        currentUser = data;
+        showDashboard();
+      }
+    } catch(e) {
+      console.warn('Auto-login failed:', e);
+    }
+  }
+}
+
+// ===== INIT =====
+function init() {
+  console.log('[Dashboard] init()');
+  if (!initSupabase()) {
+    console.error('[Dashboard] Init failed - Supabase not ready');
+    // Try again in 500ms
+    setTimeout(init, 500);
+    return;
+  }
+  attachListeners();
+  tryAutoLogin();
+  console.log('[Dashboard] ✓ Ready');
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+</script>
+
+</body>
+</html>
